@@ -126,31 +126,38 @@
     return { zoom: z, x: w > 1500 ? .2 : .215, y: .035 };
   }
 
-  function heroP() {
-    const r = heroEl.getBoundingClientRect(), travel = heroEl.offsetHeight - innerHeight;
-    const start = innerHeight * .05, end = travel * .9;
-    return clamp((-r.top - start) / Math.max(1, end - start));
-  }
-
-  function updateHero() {
-    const p = heroP();
-    if (p === lastP) return; lastP = p;
+  /* the clear-out plays by itself shortly after you arrive; the button replays it */
+  let clearStarted = false, cleared = false, clearTimer = 0, clearRaf = 0;
+  const hintUse = meterHint ? qs('use', meterHint) : null;
+  function setHeroP(p) {
+    lastP = p;
     if (scene) scene.set(p);
-    if (!scene) { if (posterB) posterB.style.opacity = String(p); if (posterA) posterA.style.opacity = String(1 - p); }
+    else { if (posterB) posterB.style.opacity = String(p); if (posterA) posterA.style.opacity = String(1 - p); }
     if (meterBar) meterBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-    if (hintTx) {
-      const t = p < .03 ? 'Clear the room' : p > .965 ? 'Cleared. Keep going' : 'Clearing';
-      if (hintTx.textContent !== t) hintTx.textContent = t;
-    }
-    meter.classList.toggle('done', p > .965);
+    const t = p >= 1 ? 'Replay' : clearStarted ? 'Clearing' : 'Clear the room';
+    if (hintTx && hintTx.textContent !== t) { hintTx.textContent = t; if (hintUse) hintUse.setAttribute('href', p >= 1 ? '#i-replay' : '#i-down'); }
+    meter.classList.toggle('is-clear', p >= 1);
+    if (meterHint) meterHint.classList.toggle('busy', clearStarted && p < 1);
   }
-
-  /* the hint is a button: one tap plays the whole clear-out (the same thing scrolling does) */
-  const heroEndY = () => { const r = heroEl.getBoundingClientRect(), tr = heroEl.offsetHeight - innerHeight; return r.top + scrollY + innerHeight * .05 + (tr * .9 - innerHeight * .05) + 2; };
+  function stopClear() { clearTimeout(clearTimer); cancelAnimationFrame(clearRaf); }
+  function runClear(delay) {
+    stopClear(); cleared = false;
+    clearTimer = setTimeout(() => {
+      clearStarted = true;
+      const t0 = performance.now(), dur = 3800;
+      const step = () => { const k = clamp((performance.now() - t0) / dur); setHeroP(k); if (k < 1) clearRaf = requestAnimationFrame(step); else cleared = true; };
+      step();
+    }, delay);
+  }
+  function replay() {
+    stopClear(); clearStarted = false; cleared = false;
+    if (scene) scene.reset();
+    setHeroP(0);
+    runClear(scene ? 2700 : 500);
+  }
   if (meterHint) meterHint.addEventListener('click', () => {
-    if (lastP > .965) { const s = $('services'); if (s) scrollTo(s, secOffset(s)); return; }
-    if (lenis) lenis.scrollTo(heroEndY(), { duration: 2.6, easing: (x) => 1 - Math.pow(1 - x, 3) });
-    else window.scrollTo({ top: heroEndY(), behavior: reduce ? 'auto' : 'smooth' });
+    if (cleared) replay();
+    else if (!clearStarted) runClear(0);
   });
 
   function startScene() {
@@ -169,11 +176,12 @@
       addEventListener('resize', () => scene.resize());
       if (!coarse && !reduce) addEventListener('pointermove', (e) => scene.pointer((e.clientX / innerWidth - .5) * 2, (e.clientY / innerHeight - .5) * 2), { passive: true });
       if ('IntersectionObserver' in window) new IntersectionObserver((es) => { heroVisible = es[0].isIntersecting; }, { rootMargin: '10% 0px' }).observe(heroEl);
-      lastP = -1; updateHero();
       window.__scene = scene;
+      if (!reduce && !params.has('introt') && !params.has('still')) runClear(2700);
     } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); if (window.console) console.warn('scene off', err); }
   }
   startScene();
+  if (!scene) { setHeroP(0); if (!reduce) runClear(900); } else setHeroP(0);
 
   /* ==========================================================================
      SECTIONS
@@ -198,10 +206,13 @@
     };
     track.addEventListener('scroll', () => { if (!ptick) { ptick = true; requestAnimationFrame(upd); } }, { passive: true });
     addEventListener('resize', upd);
-    const by = (dir) => track.scrollBy({ left: dir * step(), behavior: reduce ? 'auto' : 'smooth' });
+    const by = (dir) => { const i = Math.round(track.scrollLeft / step()) + dir; track.scrollTo({ left: Math.max(0, i) * step(), behavior: reduce ? 'auto' : 'smooth' }); };
     if (prev) prev.addEventListener('click', () => by(-1));
     if (next) next.addEventListener('click', () => by(1));
     track.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); by(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); by(-1); } });
+    // sideways trackpad/wheel gestures belong to the lineup, not to the smooth-scroll layer
+    track.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
+    track.addEventListener('dragstart', (e) => e.preventDefault());
     // a mouse can drag the lineup like a trackpad swipe
     let down = false, sx = 0, sl = 0, moved = false;
     track.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = false; sx = e.clientX; sl = track.scrollLeft; });
@@ -217,29 +228,13 @@
     if (s.classList.contains('play')) return;
     s.classList.add('play');
     const n = s.dataset.s;
-    if (n === '2') setTimeout(() => qs('.pc-ok', s).classList.add('press'), 2700);
-    if (n === '3') qsa('.trk li', s).forEach((li, i) => setTimeout(() => li.classList.add('on'), [500, 1300, 2000, 4100][i]));
+    if (n === '2') setTimeout(() => qs('.pc-ok', s).classList.add('press'), 3600);
   }
   window.__playStep = playStep;
   if ('IntersectionObserver' in window && !reduce) {
     const io2 = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { playStep(en.target); io2.unobserve(en.target); } }), { threshold: .55 });
     steps.forEach((s) => io2.observe(s));
   } else steps.forEach((s) => { playStep(s); if (reduce) { s.classList.add('play'); } });
-
-  /* ---------- coverage: the ZIP check drives the map ---------- */
-  const covZip = $('covZip'), covOut = $('covOut'), map = $('map');
-  if (covZip) {
-    const dflt = covOut.innerHTML;
-    covZip.addEventListener('input', () => {
-      covZip.value = covZip.value.replace(/\D/g, '');
-      const z = zone(covZip.value);
-      if (!z) { covOut.className = 'zc-out'; covOut.innerHTML = dflt; map.removeAttribute('data-z'); return; }
-      const t = zoneText(z);
-      covOut.className = 'zc-out ' + z.level; covOut.textContent = t[0];
-      map.dataset.z = z.level === 'ok' ? (z.city === 'Henderson' ? 'he' : 'lv') : z.level === 'near' ? 'nl' : 'out';
-    });
-    $('zipcheck').addEventListener('submit', (e) => e.preventDefault());
-  }
 
   /* ---------- FAQ ---------- */
   qsa('.qa button').forEach((b) => b.addEventListener('click', () => {
@@ -265,16 +260,14 @@
     nav.classList.toggle('solid', y > 24);
     const dk = darks.some((s) => { const r = s.getBoundingClientRect(); return r.top <= 38 && r.bottom >= 38; });
     nav.classList.toggle('dark', dk || (burger && burger.getAttribute('aria-expanded') === 'true'));
-    updateHero();
     // phones: nav and dock slide away while you scroll down, return when you scroll up or pause
     const dy = y - lastY;
     if (Math.abs(dy) >= 6) {
       lastY = y;
       if (!phoneMq.matches) nav.classList.remove('hide');
       else {
-        const hero = heroEl.getBoundingClientRect(), inHero = hero.top > -(heroEl.offsetHeight - innerHeight - 40);
         const down = dy > 0 && y > 140, menuOpen = burger && burger.getAttribute('aria-expanded') === 'true';
-        nav.classList.toggle('hide', down && !menuOpen && !inHero);
+        nav.classList.toggle('hide', down && !menuOpen);
         if (dockEl) dockEl.classList.toggle('quiet', down);
         clearTimeout(quietT);
         if (down && dockEl) quietT = setTimeout(() => dockEl.classList.remove('quiet'), 700);
@@ -290,7 +283,7 @@
   let navTick = false;
   function navTone() { onScroll(); }
   addEventListener('scroll', () => { if (!navTick) { navTick = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  addEventListener('resize', () => { lastP = -1; onScroll(); });
+  addEventListener('resize', onScroll);
   onScroll();
 
   /* ==========================================================================

@@ -27,7 +27,7 @@
   <div class="track-wrap">
     <ul class="track" id="svcTrack" tabindex="0" aria-label="Services, scroll sideways to browse">
       <li class="card" style="--tint:#e5edf4">
-        <div class="card-art"><img src="img/scene-home.webp" width="1200" height="900" alt="A garage with a loaded shelf, boxes, storage bins and a bike, ready to be cleared" loading="lazy"></div>
+        <div class="card-art"><img draggable="false" src="img/scene-home.webp" width="1200" height="900" alt="A garage with a loaded shelf, boxes, storage bins and a bike, ready to be cleared" loading="lazy"></div>
         <div class="card-body">
           <h3>Home, garage and estate cleanouts</h3>
           <p>Garages, attics, basements and spare rooms, or a whole house for a move-out or estate. We carry it out and haul it away.</p>
@@ -36,7 +36,7 @@
         </div>
       </li>
       <li class="card" style="--tint:#f4ebe0">
-        <div class="card-art"><img src="img/scene-furniture.webp" width="1200" height="900" alt="A living room's worth of couch, armchair, dresser, fridge, washer and TV" loading="lazy"></div>
+        <div class="card-art"><img draggable="false" src="img/scene-furniture.webp" width="1200" height="900" alt="A living room's worth of couch, armchair, dresser, fridge, washer and TV" loading="lazy"></div>
         <div class="card-body">
           <h3>Furniture and appliances</h3>
           <p>Couches, mattresses, fridges, TVs and exercise equipment. From inside the house or from the curb.</p>
@@ -45,7 +45,7 @@
         </div>
       </li>
       <li class="card" style="--tint:#e9e9e6">
-        <div class="card-art"><img src="img/scene-construction.webp" width="1200" height="900" alt="Drywall, lumber, old cabinets, rubble and a wheelbarrow from a remodel" loading="lazy"></div>
+        <div class="card-art"><img draggable="false" src="img/scene-construction.webp" width="1200" height="900" alt="Drywall, lumber, old cabinets, rubble and a wheelbarrow from a remodel" loading="lazy"></div>
         <div class="card-body">
           <h3>Construction cleanup</h3>
           <p>Drywall, lumber, tile, cabinets and demo debris from remodels and builds.</p>
@@ -54,7 +54,7 @@
         </div>
       </li>
       <li class="card" style="--tint:#e6ecf2">
-        <div class="card-art"><img src="img/scene-commercial.webp" width="1200" height="900" alt="An office with desks, chairs, monitors, filing cabinets and a whiteboard" loading="lazy"></div>
+        <div class="card-art"><img draggable="false" src="img/scene-commercial.webp" width="1200" height="900" alt="An office with desks, chairs, monitors, filing cabinets and a whiteboard" loading="lazy"></div>
         <div class="card-body">
           <h3>Commercial and property</h3>
           <p>Offices, storefronts, apartment turnovers and vacant units. One time or on a recurring schedule.</p>
@@ -63,7 +63,7 @@
         </div>
       </li>
       <li class="card" style="--tint:#e9f0e2">
-        <div class="card-art"><img src="img/scene-yard.webp" width="1200" height="900" alt="A yard with branches, palm fronds, old fence panels, a hot tub and a grill" loading="lazy"></div>
+        <div class="card-art"><img draggable="false" src="img/scene-yard.webp" width="1200" height="900" alt="A yard with branches, palm fronds, old fence panels, a hot tub and a grill" loading="lazy"></div>
         <div class="card-body">
           <h3>Yard and outdoor cleanup</h3>
           <p>Tree trimmings, brush, palm fronds, old fencing and the outdoor items you are done with.</p>
@@ -108,22 +108,27 @@
         <div class="step-vis">
           <div class="phone" aria-hidden="true">
             <div class="ph-screen">
+              <div class="ph-status ph-status--cam"><b>9:41</b><span class="sb"><svg class="sb-sig" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="sb-wifi" viewBox="0 0 17 12"><path d="M1 4.2a10 10 0 0 1 15 0M3.6 6.9a6.3 6.3 0 0 1 9.8 0M6.2 9.5a2.8 2.8 0 0 1 4.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><svg class="sb-bat" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor"/><path d="M24 4v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="currentColor" opacity=".5"/></svg></span></div>
               <div class="cam">
                 <img class="cam-img" src="img/room-full.webp" alt="" loading="lazy">
+                <div class="cam-top"><svg viewBox="0 0 24 24"><path d="M13 2L5 13.5h6L10 22l8-11.5h-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="chev" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.6 2.6"/></svg></div>
                 <i class="cam-br tl"></i><i class="cam-br tr"></i><i class="cam-br bl"></i><i class="cam-br br"></i>
                 <i class="cam-focus"></i><i class="cam-flash"></i>
-                <span class="cam-mode">Photo</span>
+                <span class="cam-zoom">1×</span>
+                <span class="cam-modes"><em>VIDEO</em><em class="on">PHOTO</em><em>PORTRAIT</em></span>
                 <div class="cam-bar"><span class="cam-th"></span><span class="cam-shutter"><i></i></span><span class="cam-sw"></span></div>
               </div>
               <div class="msg">
-                <div class="ph-head"><svg class="ph-mk" viewBox="0 0 142 108"><use href="#mk"/></svg><b>Swift Junk Removal</b></div>
+                <div class="ph-nav"><span class="bk"><svg viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="who"><i class="av"><svg viewBox="0 0 142 108"><use href="#mk"/></svg></i><b>Swift Junk Removal<svg viewBox="0 0 8 12"><path d="M1.5 1.5L6 6l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b></span><span></span></div>
                 <div class="thread">
-                  <div class="bub bub--out bub--img"><img src="img/room-full.webp" alt="" loading="lazy"></div>
-                  <div class="bub bub--out">Garage cleanout. About ten boxes and two mattresses.</div>
-                  <div class="tick"><svg><use href="#i-check"/></svg>Sent</div>
+                  <div class="stamp"><b>Today</b> 9:41 AM</div>
+                  <div class="bub bub--out bub--img anim" style="--d:3.2s"><img src="img/room-full.webp" alt="" loading="lazy"></div>
+                  <div class="bub bub--out tail anim" style="--d:3.9s">Hi! Garage cleanout. About ten boxes and two mattresses.</div>
+                  <div class="rcpt anim" style="--d:4.6s">Delivered</div>
                 </div>
-                <div class="composer"><span>Text message</span><i></i></div>
+                <div class="composer"><i class="plus"></i><span>iMessage</span><i class="mic"></i></div>
               </div>
+              <i class="ph-home"></i>
             </div>
           </div>
         </div>
@@ -138,20 +143,31 @@
         <div class="step-vis">
           <div class="phone" aria-hidden="true">
             <div class="ph-screen">
+              <div class="ph-status"><b>9:42</b><span class="sb"><svg class="sb-sig" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="sb-wifi" viewBox="0 0 17 12"><path d="M1 4.2a10 10 0 0 1 15 0M3.6 6.9a6.3 6.3 0 0 1 9.8 0M6.2 9.5a2.8 2.8 0 0 1 4.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><svg class="sb-bat" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor"/><path d="M24 4v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="currentColor" opacity=".5"/></svg></span></div>
               <div class="msg msg--on">
-                <div class="ph-head"><svg class="ph-mk" viewBox="0 0 142 108"><use href="#mk"/></svg><b>Swift Junk Removal</b></div>
+                <div class="ph-nav"><span class="bk"><svg viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="who"><i class="av"><svg viewBox="0 0 142 108"><use href="#mk"/></svg></i><b>Swift Junk Removal<svg viewBox="0 0 8 12"><path d="M1.5 1.5L6 6l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b></span><span></span></div>
                 <div class="thread">
-                  <div class="bub bub--out bub--img"><img src="img/room-full.webp" alt="" loading="lazy"></div>
-                  <div class="bub bub--in">Got it. Your price is ready.</div>
-                  <div class="pcard">
+                  <div class="stamp"><b>Today</b> 9:42 AM</div>
+                  <div class="slot">
+                    <div class="typing" style="--d:.5s;--dur:1.1s"><i></i><i></i><i></i></div>
+                    <div class="bub bub--in tail anim" style="--d:1.6s">Got your photos. Here's your price.</div>
+                  </div>
+                  <div class="pcard anim" style="--d:2.2s">
                     <div class="pc-top"><span>Your price</span><em>Before we lift</em></div>
                     <div class="pc-amt">Quoted up front</div>
                     <ul><li>All lifting and loading</li><li>Haul-away and disposal</li><li>Nothing starts until you approve</li></ul>
                     <div class="pc-btns"><span class="pc-ok"><b>Approve</b><b class="done"><svg><use href="#i-check"/></svg>Approved</b></span><span class="pc-ask">Ask a question</span></div>
                   </div>
+                  <div class="bub bub--out tail anim" style="--d:4.1s">Looks good. Approved!</div>
+                  <div class="rcpt anim" style="--d:4.6s">Delivered</div>
+                  <div class="slot">
+                    <div class="typing" style="--d:4.9s;--dur:1.1s"><i></i><i></i><i></i></div>
+                    <div class="bub bub--in tail anim" style="--d:6s">Booked. We'll text you when the crew is on the way.</div>
+                  </div>
                 </div>
-                <div class="composer"><span>Text message</span><i></i></div>
+                <div class="composer"><i class="plus"></i><span>iMessage</span><i class="mic"></i></div>
               </div>
+              <i class="ph-home"></i>
             </div>
           </div>
         </div>
@@ -166,45 +182,34 @@
         <div class="step-vis">
           <div class="phone" aria-hidden="true">
             <div class="ph-screen">
-              <div class="trk-screen">
-                <div class="ph-head"><svg class="ph-mk" viewBox="0 0 142 108"><use href="#mk"/></svg><b>Your job</b></div>
-                <div class="trk-img">
-                  <img class="a" src="img/room-full.webp" alt="" loading="lazy"><img class="b" src="img/room-empty.webp" alt="" loading="lazy"><i class="trk-sweep"></i>
+              <div class="ph-status"><b>2:15</b><span class="sb"><svg class="sb-sig" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="sb-wifi" viewBox="0 0 17 12"><path d="M1 4.2a10 10 0 0 1 15 0M3.6 6.9a6.3 6.3 0 0 1 9.8 0M6.2 9.5a2.8 2.8 0 0 1 4.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><svg class="sb-bat" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor"/><path d="M24 4v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="currentColor" opacity=".5"/></svg></span></div>
+              <div class="msg msg--on">
+                <div class="ph-nav"><span class="bk"><svg viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="who"><i class="av"><svg viewBox="0 0 142 108"><use href="#mk"/></svg></i><b>Swift Junk Removal<svg viewBox="0 0 8 12"><path d="M1.5 1.5L6 6l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b></span><span></span></div>
+                <div class="thread">
+                  <div class="stamp"><b>Today</b> 2:15 PM</div>
+                  <div class="bub bub--in anim" style="--d:.4s">Your crew is on the way.</div>
+                  <div class="bub bub--in tail anim" style="--d:1.3s">All cleared. Here's your space back.</div>
+                  <div class="photo anim" style="--d:2.2s">
+                    <div class="trk-img"><img class="a" src="img/room-full.webp" alt="" loading="lazy"><img class="b" src="img/room-empty.webp" alt="" loading="lazy"><i class="trk-sweep"></i></div>
+                    <span class="react anim" style="--d:5.7s"><svg viewBox="0 0 24 24"><path d="M12 20.5C5 15.3 3 11.8 3 8.9 3 6.2 5 4.5 7.3 4.5c1.9 0 3.4 1 4.7 2.9 1.3-1.9 2.8-2.9 4.7-2.9C19 4.5 21 6.2 21 8.9c0 2.9-2 6.400-9 11.600z" fill="currentColor"/></svg></span>
+                  </div>
+                  <div class="bub bub--out tail anim" style="--d:6.2s">Wow. Thank you!</div>
+                  <div class="rcpt anim" style="--d:6.7s">Delivered</div>
                 </div>
-                <ol class="trk">
-                  <li><i><svg><use href="#i-check"/></svg></i>Crew assigned</li>
-                  <li><i><svg><use href="#i-check"/></svg></i>On the way</li>
-                  <li><i><svg><use href="#i-check"/></svg></i>Loading up</li>
-                  <li><i><svg><use href="#i-check"/></svg></i>All cleared</li>
-                </ol>
+                <div class="composer"><i class="plus"></i><span>iMessage</span><i class="mic"></i></div>
+              </div>
+              <i class="ph-home"></i>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ol>
               </div>
             </div>
           </div>
         </div>
       </li>
     </ol>
-  </div>
-</section>
-
-<!-- ============================ COVERAGE ============================ -->
-<section class="cov" id="coverage" aria-labelledby="covH">
-  <div class="wrap cov-grid">
-    <div class="cov-tx">
-      <h2 class="h2" id="covH">Across Las Vegas and Henderson.</h2>
-      <p class="lede">Enter your ZIP and we'll tell you right away if we cover it.</p>
-      <form class="zipcheck" id="zipcheck" novalidate>
-        <label class="sr" for="covZip">Your ZIP code</label>
-        <input id="covZip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Your ZIP code">
-        <output class="zc-out" id="covOut" aria-live="polite"><span>Try 89101 or 89052</span></output>
-      </form>
-      <ul class="areas" aria-label="Some of the neighborhoods we visit">
-        <li>Downtown</li><li>The Strip corridor</li><li>Summerlin</li><li>Spring Valley</li><li>Enterprise</li><li>Green Valley</li><li>Anthem</li><li>Southern Highlands</li>
-      </ul>
-      <a class="btn btn--ink" href="#quote" data-service="general">Get a price<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-    <figure class="map" id="map" aria-label="A map of the Las Vegas valley with Las Vegas and Henderson highlighted">
-      <!--MAP-->
-    </figure>
   </div>
 </section>
 

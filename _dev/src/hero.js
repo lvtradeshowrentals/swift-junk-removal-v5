@@ -204,6 +204,7 @@ export function createHero(canvas, opt = {}) {
     setLoad(i) { S.load = i; },
     setNow(p) { S.p = S.ps = clamp01(p); },
     play() { S.introOn = true; },
+    reset() { S.p = S.ps = 0; S.intro = 0; S.introOn = true; applyIntro(0); },
     introAt(t) { S.introOn = false; S.intro = t; applyIntro(t); },
     introNow() { S.introOn = true; S.intro = 3; applyIntro(3); },
     pointer(x, y) { S.px = x; S.py = y; },
