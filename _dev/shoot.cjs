@@ -21,7 +21,7 @@ const size = a[0] || 'desktop', name = a[1] || 'shot';
 const opt = (k, d) => { const i = a.indexOf('--' + k); return i > -1 ? a[i + 1] : d; };
 const OUT = path.join(__dirname, 'shots');
 fs.mkdirSync(OUT, { recursive: true });
-const URL = 'file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?nosmooth' + (opt('q') ? '&' + opt('q') : '');
+const URL = 'file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?nosmooth&nosplash' + (opt('q') ? '&' + opt('q') : '');
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const settle = (page, n = 30) => page.evaluate((n) => new Promise((r) => { let i = 0; (function f() { if (++i > n) setTimeout(r, 300); else requestAnimationFrame(f); })(); }), n);
 

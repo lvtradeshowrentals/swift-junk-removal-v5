@@ -11,7 +11,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const p = await b.newPage();
   await p.setViewport(mobile ? { width: 390, height: 780, deviceScaleFactor: 1, isMobile: true, hasTouch: true } : { width: 1512, height: 900 });
   p.on('pageerror', (e) => console.log('PAGEERROR', e.message));
-  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?noscene=1' + (smooth ? '' : '&nosmooth'), { waitUntil: 'load' });
+  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?noscene=1&nosplash' + (smooth ? '' : '&nosmooth'), { waitUntil: 'load' });
   await wait(2500);
   const Y = () => p.evaluate(() => Math.round(scrollY));
   const center = (sel) => p.evaluate((s) => { const r = document.querySelector(s).getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; }, sel);

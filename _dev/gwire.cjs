@@ -10,7 +10,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const p = await b.newPage();
   await p.setViewport(mobile ? { width: 390, height: 780, deviceScaleFactor: 1, isMobile: true, hasTouch: true } : { width: 1512, height: 900 });
   p.on('pageerror', (e) => console.log('PAGEERROR', e.message));
-  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?noscene=1&nosmooth', { waitUntil: 'load' });
+  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?noscene=1&nosmooth&nosplash', { waitUntil: 'load' });
   await wait(2000);
   await p.evaluate(() => { const g = document.getElementById('gaugeArt'); window.scrollTo(0, g.getBoundingClientRect().top + scrollY - 200); });
   await wait(2500);

@@ -1,0 +1,20 @@
+
+/* ---------- how it works: a road that leads you down the steps ---------- */
+.route { position: relative; }
+.road { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; overflow: visible; }
+.route .steps { position: relative; z-index: 1; }
+.road .st-halo { fill: rgba(255, 90, 31, 0); transition: fill .5s; }
+.road .st-ring { fill: #0a0e13; stroke: rgba(255, 255, 255, .22); stroke-width: 2.4; transition: stroke .4s; }
+.road .st-core { fill: #18212c; transition: fill .4s; }
+.road .st-n { fill: #8ea2b4; font-family: var(--f-d); font-weight: 700; font-size: 22px; transition: fill .4s; }
+.road .stop.on .st-halo { fill: rgba(255, 90, 31, .2); animation: stPulse 2.4s var(--ease-io) infinite; }
+.road .stop.on .st-ring { stroke: #ff5a1f; }
+.road .stop.on .st-core { fill: #ff5a1f; }
+.road .stop.on .st-n { fill: #0a0e13; }
+@keyframes stPulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.route-end { position: relative; z-index: 1; display: flex; width: fit-content; align-items: center; justify-content: center; gap: 12px; height: 64px; padding: 0 30px; margin: clamp(36px, 5vw, 64px) auto 0; border-radius: 20px; background: #1a232e; color: #fff; font-weight: 600; font-size: 18px; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .16); transition: background .4s, color .4s, box-shadow .4s, transform .4s var(--ease); }
+.route-end svg { width: 20px; height: 20px; transition: transform .35s var(--ease); }
+.route-end:hover svg { transform: translateX(4px); }
+.route-end.on { background: var(--hot); color: var(--ink); box-shadow: 0 0 0 0 rgba(255, 90, 31, .6), 0 20px 40px -18px rgba(255, 90, 31, .7); animation: endPulse 2.2s var(--ease-io) infinite; }
+@keyframes endPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 90, 31, .5), 0 20px 40px -18px rgba(255, 90, 31, .7); } 50% { box-shadow: 0 0 0 12px rgba(255, 90, 31, 0), 0 20px 40px -18px rgba(255, 90, 31, .7); } }
+@media (prefers-reduced-motion: reduce) { .road .stop.on .st-halo, .route-end.on { animation: none; } }
