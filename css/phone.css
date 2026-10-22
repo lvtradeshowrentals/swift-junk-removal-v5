@@ -31,7 +31,7 @@
   .zipnote { display: none; }
   .meter { left: var(--gut); right: var(--gut); bottom: calc(env(safe-area-inset-bottom) + 98px); width: auto; grid-template-columns: auto 1fr; align-items: center; gap: 10px 14px; }
   .meter-bar { grid-column: 2; grid-row: 1; }
-  .meter-hint { grid-column: 1 / -1; }
+  .meter-hint { grid-column: 1 / -1; justify-self: start; height: 40px; }
   .meter-n b { font-size: 36px; }
 
   .prom { margin-top: -10svh; border-radius: 28px 28px 0 0; }

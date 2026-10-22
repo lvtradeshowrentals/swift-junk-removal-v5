@@ -212,5 +212,7 @@ export function createHero(canvas, opt = {}) {
     destroy() { S.alive = false; renderer.dispose(); },
   };
   layout();
+  // warm every shader (dissolve, particles, sweep) so the first scrub does not hitch
+  { const was = sheet.visible; sheet.visible = true; renderer.compile(scene, camera); sheet.visible = was; }
   return api;
 }

@@ -120,7 +120,7 @@
   function frameFn(w, h, portrait) {
     if (portrait) {
       const z = clamp(1.125 * w / h, .4, 1.2);
-      return { zoom: z, x: 0, y: .04 };
+      return { zoom: z, x: 0, y: h < 700 ? -.012 : .04 };
     }
     const z = Math.min(clamp(h / 780, .8, 1.4), .65 * w / h);
     return { zoom: z, x: w > 1500 ? .2 : .215, y: .035 };
@@ -139,11 +139,19 @@
     if (!scene) { if (posterB) posterB.style.opacity = String(p); if (posterA) posterA.style.opacity = String(1 - p); }
     if (meterBar) meterBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
     if (hintTx) {
-      const t = p < .03 ? (coarse ? 'Swipe up to clear it' : 'Scroll to clear it') : p > .965 ? 'Cleared. Keep going' : 'Clearing';
+      const t = p < .03 ? 'Clear the room' : p > .965 ? 'Cleared. Keep going' : 'Clearing';
       if (hintTx.textContent !== t) hintTx.textContent = t;
     }
     meter.classList.toggle('done', p > .965);
   }
+
+  /* the hint is a button: one tap plays the whole clear-out (the same thing scrolling does) */
+  const heroEndY = () => { const r = heroEl.getBoundingClientRect(), tr = heroEl.offsetHeight - innerHeight; return r.top + scrollY + innerHeight * .05 + (tr * .9 - innerHeight * .05) + 2; };
+  if (meterHint) meterHint.addEventListener('click', () => {
+    if (lastP > .965) { const s = $('services'); if (s) scrollTo(s, secOffset(s)); return; }
+    if (lenis) lenis.scrollTo(heroEndY(), { duration: 2.6, easing: (x) => 1 - Math.pow(1 - x, 3) });
+    else window.scrollTo({ top: heroEndY(), behavior: reduce ? 'auto' : 'smooth' });
+  });
 
   function startScene() {
     if (!window.SwiftScene || params.has('noscene')) { stage.classList.add('static'); return; }
