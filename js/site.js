@@ -265,7 +265,7 @@
       return { x: 24, y: h.top + h.height / 2 - rb.top, gap: 56 };
     });
     const er = routeEnd.getBoundingClientRect();
-    const end = wide ? [er.left + er.width / 2 - rb.left, er.top - rb.top - 40] : [24, er.top - rb.top - 40];
+    const end = wide ? [er.left + er.width / 2 - rb.left, er.top - rb.top - 36] : [24, er.top - rb.top - 36];
     const pts = [[stops[0].x, 0]];
     stops.forEach((p, i) => { pts.push([p.x, p.y]); const nx = stops[i + 1]; pts.push(nx ? [(p.x + nx.x) / 2, (p.y + nx.y) / 2] : [(p.x + end[0]) / 2, (p.y + end[1]) / 2]); });
     pts.push(end);
