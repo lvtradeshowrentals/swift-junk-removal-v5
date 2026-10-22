@@ -304,11 +304,12 @@
   const form = $('quoteForm'), card = $('formCard');
   if (!form) { window.SWIFT5 = { scrollTo, go, navTone }; return; }
   const St = { step: 1, sel: new Set(), files: [], no: '', loadSet: false };
-  let gauge = null;                       // the 3D truck, once it has loaded
+  let gauge = null;                       // the blueprint truck
+  const gsvgEl = $('gaugeSvg');
 
   function setLoad(idx, touched) {
     const s = STOPS[idx];
-    if (gauge) gauge.setLoad(idx);
+    if (gauge) { gauge.setLoad(idx); if (touched && gsvgEl) gsvgEl.classList.remove('hint'); }
     const range = $('f-load'), p = (idx / 5) * 100;
     range.style.setProperty('--p', p + '%');
     if (touched) { St.loadSet = true; range.classList.remove('untouched'); }
@@ -425,7 +426,7 @@
   setLoad(2, false);
   const gaugeEl = $('gauge'), qGrid = qs('.q-grid'), sizeBlock = qs('.size', form);
   /* on a phone the gauge moves next to the slider, so you watch it react to your thumb */
-  const placeGauge = () => { if (phoneMq.matches) sizeBlock.insertBefore(gaugeEl, $('f-load')); else qGrid.insertBefore(gaugeEl, qGrid.firstChild); if (gauge) gauge.resize(); };
+  const placeGauge = () => { if (phoneMq.matches) sizeBlock.insertBefore(gaugeEl, $('f-load')); else qGrid.insertBefore(gaugeEl, qGrid.firstChild); };
   placeGauge();
   (phoneMq.addEventListener ? phoneMq.addEventListener('change', placeGauge) : phoneMq.addListener(placeGauge));
   St.no = orderNo();
@@ -471,38 +472,21 @@
     if (St.step !== 1) setStep(1, -1);
   });
 
-  /* the 3D truck: built the first time the quote section is near, and only drawn while it is on screen */
-  let gaugeOn = false;
-  function startGauge() {
-    if (gauge || !window.SwiftScene || params.has('noscene')) return;
-    try {
-      if (!document.createElement('canvas').getContext('webgl2')) return;
-      const cvG = $('gaugeCv');
-      const g = SwiftScene.createHero(cvG, {
-        scene: 'truck', az: 30, el: 33, low: coarse || (navigator.hardwareConcurrency || 8) <= 4, static: reduce,
-        frame: (w, h) => ({ zoom: clamp(1.36 * w / h, .8, 1.95), x: 0, y: .03 }),
-      });
-      g.introNow(); g.resize();
-      let raf = 0;
-      const loop = (t) => { raf = requestAnimationFrame(loop); if (gaugeOn) g.frame(t); };
-      raf = requestAnimationFrame(loop);
-      addEventListener('resize', () => g.resize());
-      if ('IntersectionObserver' in window) new IntersectionObserver((es) => { gaugeOn = es[0].isIntersecting; }, { rootMargin: '80px' }).observe($('gaugeArt'));
-      else gaugeOn = true;
-      gauge = g;
-      gauge.setLoad(+$('f-load').value);
-      $('gaugeArt').classList.add('live');
-      /* one short demo the first time it is on screen, so it reads as interactive */
-      if (!reduce && 'IntersectionObserver' in window) {
-        const iog = new IntersectionObserver((es) => {
-          if (!es[0].isIntersecting) return;
-          iog.disconnect();
-          [0, 1, 3, 4, 2].forEach((idx, n) => setTimeout(() => { if (!St.loadSet) gauge.setLoad(idx); }, 600 + n * 760));
-        }, { threshold: .6 });
-        iog.observe($('gaugeArt'));
-      }
-    } catch (err) { gauge = null; if (window.console) console.warn('gauge off', err); }
+  /* the blueprint truck: its outline draws itself the first time the quote section is on screen */
+  if (gsvgEl && window.SwiftGauge) {
+    gauge = SwiftGauge.create(gsvgEl, (idx) => { rng.value = idx; setLoad(idx, true); });
+    gsvgEl.classList.add('hint');
+    gauge.setLoad(+$('f-load').value, true);
+    const art = $('gaugeArt');
+    if ('IntersectionObserver' in window) {
+      const iog = new IntersectionObserver((es) => {
+        if (!es[0].isIntersecting) return;
+        iog.disconnect(); gauge.reveal();
+        /* a short demo so it reads as interactive */
+        if (!reduce) [0, 1, 3, 4, 2].forEach((idx, n) => setTimeout(() => { if (!St.loadSet) gauge.setLoad(idx); }, 2300 + n * 900));
+      }, { threshold: .55 });
+      iog.observe(art);
+    } else gauge.reveal();
   }
-  if ('IntersectionObserver' in window) { const ioq = new IntersectionObserver((es) => { if (es[0].isIntersecting) { startGauge(); ioq.disconnect(); } }, { rootMargin: '700px 0px' }); ioq.observe($('quote')); } else startGauge();
   window.SWIFT5 = { scrollTo, go, navTone, setLoad };
 })();

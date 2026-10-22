@@ -335,7 +335,7 @@
 
     <div class="q-grid">
       <aside class="gauge" id="gauge" aria-label="Load size">
-        <div class="gauge-art" id="gaugeArt"><canvas id="gaugeCv" aria-hidden="true"></canvas></div>
+        <div class="gauge-art" id="gaugeArt"><svg id="gaugeSvg" aria-hidden="true" focusable="false"></svg></div>
         <div class="gauge-read" aria-live="polite">
           <p class="gauge-val" id="gVal">Slide to size your load</p>
           <p class="gauge-sub" id="gSub">A rough guess is fine. We confirm the price before we lift.</p>
@@ -368,7 +368,7 @@
                 <div class="size-top"><label for="f-load">How much is there?</label><output id="sizeOut" for="f-load">Not set</output></div>
                 <input id="f-load" class="range untouched" type="range" min="0" max="5" step="1" value="2" aria-describedby="sizeHint">
                 <div class="range-ticks" aria-hidden="true"><span>A few items</span><span>Quarter</span><span>Half</span><span>Three-quarter</span><span>Full</span><span>More</span></div>
-                <p class="hint" id="sizeHint">Optional. Think of a pickup truck bed.</p>
+                <p class="hint" id="sizeHint">Optional. Tap or drag the truck, or use the slider.</p>
               </div>
             </div>
 
@@ -535,6 +535,7 @@
 
 <script src="js/vendor/lenis.min.js" defer></script>
 <script src="js/scene.js" defer></script>
+<script src="js/gauge.js" defer></script>
 <script src="js/site.js" defer></script>
 </body>
 </html>

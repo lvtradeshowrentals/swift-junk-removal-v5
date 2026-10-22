@@ -75,7 +75,7 @@
   .size { margin-top: 22px; padding-top: 20px; }
   .size-top { margin-bottom: 12px; } .size-top output { display: none; }
   .size .gauge { position: relative; top: auto; margin: 0 0 14px; padding: 8px 8px 16px; border-radius: 22px; box-shadow: 0 0 0 1px var(--line); background: var(--studio); }
-  .size .gauge-art { aspect-ratio: 16 / 10; border-radius: 16px; }
+  .size .gauge-art { border-radius: 16px; }
   .size .gauge-val { font-size: 23px; } .size .gauge-read { padding: 14px 10px 0; }
   .size .gauge-sub { font-size: 14px; min-height: 0; }
   .field input[type="text"], .field input[type="tel"] { height: 56px; }

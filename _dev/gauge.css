@@ -1,0 +1,51 @@
+.gauge-art { position: relative; aspect-ratio: 680 / 440; border-radius: 24px; overflow: hidden; background: radial-gradient(80% 70% at 50% 45%, #14202c 0%, #0a1118 100%); box-shadow: inset 0 0 0 1px rgba(160, 200, 235, .14); }
+.bp { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; font-family: var(--f-t); }
+.bp.grab { cursor: grabbing; }
+.bp .crop { fill: none; stroke: rgba(160, 200, 235, .45); stroke-width: 1.5; }
+.bp .ol path, .bp .ol rect, .bp .ol line { fill: none; stroke: #bcd7ec; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.bp .ol .rib { stroke: rgba(160, 200, 235, .16); stroke-width: 1.2; }
+.bp .body { transition: transform .7s var(--ease); }
+.bp .mk1 { fill: none; stroke: #ffd2bd; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.bp .mk2 { fill: none; stroke: #ff5a1f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.bp .wheel { transition: transform .9s var(--ease); }
+.bp .wheel circle { fill: #0a1118; stroke: #bcd7ec; stroke-width: 2; }
+.bp .wheel circle:nth-of-type(2) { fill: none; }
+.bp .wheel .spoke { stroke: rgba(188, 215, 236, .55); stroke-width: 1.6; stroke-linecap: round; }
+.bp .ground { stroke: rgba(160, 200, 235, .5); stroke-width: 1.6; }
+.bp .hatch { stroke: rgba(160, 200, 235, .2); stroke-width: 1.2; }
+.bp .ft { stroke: rgba(160, 200, 235, .1); stroke-width: 1; stroke-dasharray: 2 5; }
+.bp .wash { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); transition: transform .7s var(--ease); }
+.bp .it { opacity: 0; translate: 0 -18px; transition: opacity .45s var(--ease), translate .7s var(--ease); }
+.bp .it.on { opacity: 1; translate: 0 0; }
+.bp .it * { fill: rgba(188, 215, 236, .06); stroke: #e4f1fb; stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round; }
+.bp .it.new * { stroke: #ffb592; fill: rgba(255, 90, 31, .16); }
+.bp .it.ghost * { stroke: #ff9a6e; stroke-dasharray: 5 4; fill: rgba(255, 90, 31, .06); }
+.bp .dim line, .bp .dim path { stroke: #6fa6d6; stroke-width: 1.8; fill: none; }
+.bp .dim .ext { stroke: rgba(111, 166, 214, .4); stroke-dasharray: 4 4; stroke-width: 1.2; }
+.bp .dim .arw { fill: #6fa6d6; stroke: none; }
+.bp .dim .tk { stroke-width: 1.4; }
+.bp .dim .tk.big { stroke: #a6cdee; stroke-width: 1.8; }
+.bp .dt { fill: #a6cdee; font-size: 22px; font-weight: 600; letter-spacing: .01em; }
+.bp .dim2 { fill: #6f8ea8; font-weight: 500; }
+.bp .cap { fill: #6f8ea8; font-size: 19px; font-weight: 500; }
+.bp .rfill { fill: #ff5a1f; transform-box: fill-box; transform-origin: left center; transform: scaleX(0); transition: transform .7s var(--ease); }
+.bp .mk { transition: transform .7s var(--ease); }
+.bp .mline { stroke: #ff5a1f; stroke-width: 2.2; stroke-dasharray: 5 5; }
+.bp .tagbg { fill: #ff5a1f; transition: width .4s var(--ease), x .4s var(--ease); }
+.bp .tagtx { fill: #0a1118; font-size: 21px; font-weight: 700; }
+.bp .hdbg { fill: #ff5a1f; stroke: #0a1118; stroke-width: 3; }
+.bp .hda { fill: #0a1118; stroke: none; }
+.bp.hint .hdbg { animation: hdpulse 1.8s var(--ease-io) infinite; }
+@keyframes hdpulse { 0%, 100% { stroke: #0a1118; stroke-width: 3; } 50% { stroke: rgba(255, 90, 31, .45); stroke-width: 12; } }
+.bp .scan { transform: translateX(-80px); }
+.bp .scan.go { animation: scan 1.7s var(--ease-io) forwards; }
+@keyframes scan { 0% { transform: translateX(-80px); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(410px); opacity: 0; } }
+/* the draw-on: nothing is drawn until the section is seen, then the outline traces itself */
+.bp:not(.draw):not(.done) .ol *, .bp:not(.draw):not(.done) .wheel circle { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.bp:not(.draw):not(.done) .dim, .bp:not(.draw):not(.done) .mk, .bp:not(.draw):not(.done) .cap, .bp:not(.draw):not(.done) .mk1, .bp:not(.draw):not(.done) .mk2, .bp:not(.draw):not(.done) .ground, .bp:not(.draw):not(.done) .hatch, .bp:not(.draw):not(.done) .rfill { opacity: 0; }
+.bp.draw .ol *, .bp.draw .wheel circle { stroke-dasharray: 1; stroke-dashoffset: 1; animation: bpdraw 1.5s var(--ease) forwards; }
+.bp.draw .ol .rib { animation-delay: .5s; }
+.bp.draw .wheel circle { animation-delay: .35s; }
+.bp.draw .dim, .bp.draw .mk, .bp.draw .cap, .bp.draw .mk1, .bp.draw .mk2, .bp.draw .ground, .bp.draw .hatch, .bp.draw .rfill { animation: bpfade .8s var(--ease) 1s both; }
+@keyframes bpdraw { to { stroke-dashoffset: 0; } }
+@keyframes bpfade { from { opacity: 0; } to { opacity: 1; } }
