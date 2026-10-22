@@ -62,20 +62,23 @@
   /* ---------- ZIP lookup (hero + form) ---------- */
   const HENDERSON = ['89002', '89011', '89012', '89014', '89015', '89044', '89052', '89053', '89074'];
   const NORTH_LV = ['89030', '89031', '89032', '89081', '89084', '89085', '89086', '89087'];
+  const BOULDER = ['89005', '89006', '89007'];
+  /* we cover the whole valley and roughly 50 miles around it: every Clark County ZIP from 89002 to 89199, minus the far-off desert towns */
+  const FAR = ['89021', '89025', '89027', '89029', '89039', '89040', '89041', '89042', '89043', '89045', '89046', '89047', '89048', '89049', '89060', '89061'];
   function zone(raw) {
     const zip = String(raw || '').trim().slice(0, 5);
     if (!/^\d{5}$/.test(zip)) return null;
-    if (HENDERSON.indexOf(zip) > -1) return { zip, city: 'Henderson', level: 'ok' };
-    if (NORTH_LV.indexOf(zip) > -1) return { zip, city: 'North Las Vegas', level: 'near' };
     const n = +zip;
-    if (n >= 89101 && n <= 89199) return { zip, city: 'Las Vegas', level: 'ok' };
-    return { zip, city: '', level: 'out' };
+    if (n < 89002 || n > 89199 || FAR.indexOf(zip) > -1) return { zip, city: '', level: 'out' };
+    if (HENDERSON.indexOf(zip) > -1) return { zip, city: 'Henderson', level: 'ok' };
+    if (NORTH_LV.indexOf(zip) > -1) return { zip, city: 'North Las Vegas', level: 'ok' };
+    if (BOULDER.indexOf(zip) > -1) return { zip, city: 'Boulder City', level: 'ok' };
+    return { zip, city: 'the Las Vegas area', level: 'ok' };
   }
   function zoneText(z) {
     if (!z) return ['', ''];
     if (z.level === 'ok') return ['Yes, we cover ' + z.city + '.', 'ok'];
-    if (z.level === 'near') return [z.city + ' is just outside our usual area. Send it and we will confirm.', 'no'];
-    return ["That's outside our usual area. Send it anyway and we'll tell you.", 'no'];
+    return ["That's a bit outside our usual area. Send it anyway and we'll tell you.", 'no'];
   }
 
   /* ---------- load-in once the display font is ready ---------- */
