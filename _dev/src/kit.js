@@ -5,15 +5,19 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 export { THREE };
 
 /* ---- the "clear" front: everything behind it is erased, with a glowing edge ---- */
-export const SH = {
-  uFront: { value: -99 },
-  uDir: { value: new THREE.Vector2(0.7071, 0.7071) },
-  uBand: { value: 0.4 },
-  uAccent: { value: new THREE.Color('#ff5a1f') },
-};
+const ACCENT = new THREE.Color('#ff5a1f'), DIR = new THREE.Vector2(0.7071, 0.7071);
+/* uSign +1: things behind the front are erased (clear). uSign -1: things behind the front are built (reveal). */
+export const SH = { uFront: { value: -99 }, uDir: { value: DIR }, uBand: { value: 0.4 }, uAccent: { value: ACCENT }, uSign: { value: 1 } };
+/* the same front, but for the walls, so they can sweep on their own schedule */
+export const SHW = { uFront: { value: -99 }, uDir: { value: DIR }, uBand: { value: 0.4 }, uAccent: { value: ACCENT }, uSign: { value: 1 } };
+/* the gauge (a separate canvas) gets its own, frozen copy so the hero's sweep never touches it */
+export const SHG = { uFront: { value: 8.6 }, uDir: { value: DIR }, uBand: { value: 0.4 }, uAccent: { value: ACCENT }, uSign: { value: -1 } };
+export const mode = { walls: false, ns: '' };
+const curU = () => (mode.walls ? SHW : mode.ns === 'G' ? SHG : SH);
+export function withWalls(fn) { mode.walls = true; try { return fn(); } finally { mode.walls = false; } }
 
 const GLSL_HEAD = /* glsl */ `
-uniform float uFront; uniform vec2 uDir; uniform float uBand; uniform vec3 uAccent;
+uniform float uFront; uniform vec2 uDir; uniform float uBand; uniform vec3 uAccent; uniform float uSign;
 varying vec3 vDW;
 float dh(vec3 p){ p = fract(p * 0.3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float dn(vec3 x){ vec3 i = floor(x), f = fract(x); f = f * f * (3. - 2. * f);
@@ -23,16 +27,16 @@ float dsweep(vec3 w){ return dot(w.xz, uDir) + (dn(w * 1.5) * .7 + dn(w * 4.3) *
 `;
 const GLSL_DISCARD = /* glsl */ `
 float dS0 = dsweep(vDW);
-float dD = dS0 - uFront;
+float dD = (dS0 - uFront) * uSign;
 if (dD < 0.0) discard;
 float dFw = max(fwidth(dS0), 1e-4);
 float dEdge = 1.0 - smoothstep(0.0, dFw * 2.6, dD);
 float dGlow = 1.0 - smoothstep(0.0, dFw * 12.0, dD);
 `;
 
-export function dissolvable(mat, glow = true) {
+export function dissolvable(mat, glow = true, U = SH) {
   mat.onBeforeCompile = (sh) => {
-    sh.uniforms.uFront = SH.uFront; sh.uniforms.uDir = SH.uDir; sh.uniforms.uBand = SH.uBand; sh.uniforms.uAccent = SH.uAccent;
+    sh.uniforms.uFront = U.uFront; sh.uniforms.uDir = U.uDir; sh.uniforms.uBand = U.uBand; sh.uniforms.uAccent = U.uAccent; sh.uniforms.uSign = U.uSign;
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vDW;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvDW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
@@ -50,18 +54,21 @@ export function dissolvable(mat, glow = true) {
 }
 
 const DEPTH = dissolvable(new THREE.MeshDepthMaterial(), false);
+const DEPTHW = dissolvable(new THREE.MeshDepthMaterial(), false, SHW);
+const DEPTHG = dissolvable(new THREE.MeshDepthMaterial(), false, SHG);
+const curDepth = () => (mode.walls ? DEPTHW : mode.ns === 'G' ? DEPTHG : DEPTH);
 
 /* ---- materials ---- */
 const cache = new Map();
 export function clay(color, o = {}) {
-  const key = color + '|' + (o.r ?? .86) + '|' + (o.m ?? 0) + '|' + (o.cc ?? 0) + '|' + (o.e ?? 0);
+  const key = (mode.walls ? 'W' : mode.ns || 'I') + (o.side || 0) + color + '|' + (o.r ?? .86) + '|' + (o.m ?? 0) + '|' + (o.cc ?? 0) + '|' + (o.e ?? 0);
   if (cache.has(key)) return cache.get(key);
   const m = new THREE.MeshPhysicalMaterial({
     color, roughness: o.r ?? .86, metalness: o.m ?? 0, clearcoat: o.cc ?? 0, clearcoatRoughness: .5,
     emissive: o.e ? new THREE.Color(color) : 0x000000, emissiveIntensity: o.e || 0,
-    envMapIntensity: o.env ?? .55, sheen: o.sheen ?? 0, sheenRoughness: .8, sheenColor: new THREE.Color(color).lerp(new THREE.Color('#ffffff'), .35),
+    envMapIntensity: o.env ?? .55, side: o.side ?? THREE.FrontSide, sheen: o.sheen ?? 0, sheenRoughness: .8, sheenColor: new THREE.Color(color).lerp(new THREE.Color('#ffffff'), .35),
   });
-  dissolvable(m);
+  dissolvable(m, true, curU());
   cache.set(key, m);
   return m;
 }
@@ -70,7 +77,7 @@ export function clay(color, o = {}) {
 export function part(geo, mat, o = {}) {
   const m = new THREE.Mesh(geo, mat);
   m.castShadow = o.cast !== false; m.receiveShadow = o.rec !== false;
-  m.customDepthMaterial = DEPTH;
+  m.customDepthMaterial = curDepth();
   return m;
 }
 export function rb(w, h, d, mat, r = .05, seg = 3) {
@@ -110,5 +117,47 @@ export function blob(w, d, op = 1) {
   const mat = BLOB.clone(); mat.alphaMap = blobTexture(); mat.opacity = .34 * op; dissolvable(mat, false);
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.5, d * 1.5), mat);
   m.rotation.x = -Math.PI / 2; m.position.y = .01; m.renderOrder = 1;
+  return m;
+}
+
+/* ---- merge an item's many little meshes into one mesh per material (fewer draw calls) ---- */
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+export function mergeItem(root) {
+  root.updateMatrixWorld(true);
+  const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
+  const buckets = new Map(), gone = [];
+  root.traverse((o) => {
+    if (!o.isMesh || Array.isArray(o.material) || !o.material || o.material.transparent || o.material.isMeshBasicMaterial || o.userData.nomerge) return;
+    let g = o.geometry.clone();
+    g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
+    if (!g.index) { const n = g.attributes.position.count, ix = new Uint32Array(n); for (let q = 0; q < n; q++) ix[q] = q; g.setIndex(new THREE.BufferAttribute(ix, 1)); }
+    for (const k of Object.keys(g.attributes)) if (k !== 'position' && k !== 'normal' && k !== 'uv') g.deleteAttribute(k);
+    if (!g.attributes.normal) g.computeVertexNormals();
+    if (!g.attributes.uv) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+    const id = o.material.uuid + (o.castShadow ? 'c' : 'n');
+    if (!buckets.has(id)) buckets.set(id, { mat: o.material, depth: o.customDepthMaterial, cast: o.castShadow, geos: [] });
+    buckets.get(id).geos.push(g); gone.push(o);
+  });
+  gone.forEach((o) => o.parent && o.parent.remove(o));
+  buckets.forEach((b) => {
+    const m = new THREE.Mesh(mergeGeometries(b.geos, false), b.mat);
+    m.castShadow = b.cast; m.receiveShadow = true; m.customDepthMaterial = b.depth; m.userData.merged = true;
+    root.add(m);
+    b.geos.forEach((g) => g.dispose());
+  });
+  return root;
+}
+
+/* ---- small canvas decals (labels, stripes, prints) ---- */
+export function canvasTex(w, h, draw, srgb = true) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return t;
+}
+export function decal(w, h, tex, o = {}) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: o.r ?? .9, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: o.side || THREE.FrontSide }));
+  dissolvable(m.material, false, curU());
+  m.userData.nomerge = true; m.castShadow = false; m.receiveShadow = true;
   return m;
 }

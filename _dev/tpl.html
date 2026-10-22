@@ -103,9 +103,13 @@
     </div>
 
     <div class="meter" id="meter">
-      <div class="meter-n"><b id="meterN">16</b><span>items in the room</span></div>
-      <div class="meter-bar"><i id="meterBar"></i></div>
-      <button class="meter-hint" id="meterHint" type="button"><svg aria-hidden="true"><use href="#i-down"/></svg><span>Clear the room</span></button>
+      <div class="meter-n"><b id="meterN">0</b><span id="meterLbl">items in the room</span></div>
+      <div class="tabs" id="sceneTabs" role="group" aria-label="Show me">
+        <button type="button" data-i="0" class="on" aria-pressed="true">Home</button>
+        <button type="button" data-i="1" aria-pressed="false">Yard</button>
+        <button type="button" data-i="2" aria-pressed="false">Construction</button>
+      </div>
+      <button class="meter-hint" id="meterHint" type="button" hidden><svg aria-hidden="true"><use href="#i-replay"/></svg><span>Replay</span></button>
     </div>
   </div>
 </section>
