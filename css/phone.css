@@ -28,10 +28,9 @@
   .sub-b { display: none; }
   .hero-copy > .zipbar { position: absolute; left: var(--gut); right: var(--gut); bottom: calc(env(safe-area-inset-bottom) + 40px); width: auto; z-index: 3; margin: 0; }
   .zipnote { display: none; }
-  .meter { left: var(--gut); right: var(--gut); bottom: calc(env(safe-area-inset-bottom) + 112px); width: auto; display: grid; grid-template-columns: 1fr auto; gap: 10px 12px; align-items: center; }
-  .tabs { grid-column: 1 / -1; order: 3; justify-content: space-between; }
-  .tabs button { flex: 1; padding: 0 8px; height: 42px; font-size: 14.5px; }
-  .meter-hint { grid-column: 2; grid-row: 1; height: 42px; padding: 0 14px 0 11px; }
+  .meter { left: var(--gut); right: var(--gut); bottom: calc(env(safe-area-inset-bottom) + 120px); width: auto; grid-template-columns: auto 1fr; align-items: center; gap: 10px 14px; }
+  .meter-bar { grid-column: 2; grid-row: 1; }
+  .meter-hint { grid-column: 1 / -1; justify-self: start; height: 40px; }
   .meter-n b { font-size: 36px; }
 
   .prom { margin-top: -22px; border-radius: 28px 28px 0 0; }

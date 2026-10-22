@@ -111,53 +111,77 @@
      HERO SCENE
      ========================================================================== */
   const heroEl = $('top'), stage = $('stage'), cv = $('stageCv');
-  const meter = $('meter'), meterN = $('meterN'), meterLbl = $('meterLbl'), meterHint = $('meterHint');
-  const tabs = qsa('#sceneTabs button');
+  const meter = $('meter'), meterN = $('meterN'), meterBar = $('meterBar'), meterHint = $('meterHint');
+  const hintTx = meterHint ? qs('span', meterHint) : null;
   const coarse = matchMedia('(pointer: coarse)').matches;
-  let scene = null, heroVisible = true;
+  let scene = null, heroVisible = true, lastP = -1;
+  const posterB = qs('.poster--b'), posterA = qs('.poster--a');
 
   function frameFn(w, h, portrait) {
     if (portrait) {
-      const z = clamp(1.05 * w / h, .4, 1.2);
+      const z = clamp(1.125 * w / h, .4, 1.2);
       return { zoom: z, x: 0, y: h < 700 ? -.012 : .04 };
     }
-    const z = Math.min(clamp(h / 790, .8, 1.35), .62 * w / h);
+    const z = Math.min(clamp(h / 780, .8, 1.4), .65 * w / h);
     return { zoom: z, x: w > 1500 ? .2 : .215, y: .035 };
   }
 
-  /* the hero tells the page which scene it is in; the tabs, counter and replay button follow */
-  function onHeroEvent(e) {
-    if (e.type === 'scene') {
-      tabs.forEach((b, i) => { b.classList.toggle('on', i === e.index); b.setAttribute('aria-pressed', String(i === e.index)); });
-      if (meterLbl) meterLbl.textContent = 'items in the ' + e.noun;
-      meterHint.hidden = true;
-    } else if (e.type === 'phase') {
-      meter.dataset.phase = e.name;
-      tabs.forEach((b, i) => b.classList.toggle('busy', i === e.index && e.name !== 'done' && e.name !== 'hold'));
-      meterHint.hidden = e.name !== 'done';
-    }
+  /* the clear-out plays by itself shortly after you arrive; the button replays it */
+  let clearStarted = false, cleared = false, clearTimer = 0, clearRaf = 0;
+  const hintUse = meterHint ? qs('use', meterHint) : null;
+  function setHeroP(p) {
+    lastP = p;
+    if (scene) scene.set(p);
+    else { if (posterB) posterB.style.opacity = String(p); if (posterA) posterA.style.opacity = String(1 - p); }
+    if (meterBar) meterBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    const t = p >= 1 ? 'Replay' : clearStarted ? 'Clearing' : 'Clear the room';
+    if (hintTx && hintTx.textContent !== t) { hintTx.textContent = t; if (hintUse) hintUse.setAttribute('href', p >= 1 ? '#i-replay' : '#i-down'); }
+    meter.classList.toggle('is-clear', p >= 1);
+    if (meterHint) meterHint.classList.toggle('busy', clearStarted && p < 1);
   }
-  tabs.forEach((b, i) => b.addEventListener('click', () => { if (scene) scene.jump(i); }));
-  if (meterHint) meterHint.addEventListener('click', () => { if (scene) scene.jump(0); });
+  function stopClear() { clearTimeout(clearTimer); cancelAnimationFrame(clearRaf); }
+  function runClear(delay) {
+    stopClear(); cleared = false;
+    clearTimer = setTimeout(() => {
+      clearStarted = true;
+      const t0 = performance.now(), dur = 3800;
+      const step = () => { const k = clamp((performance.now() - t0) / dur); setHeroP(k); if (k < 1) clearRaf = requestAnimationFrame(step); else cleared = true; };
+      step();
+    }, delay);
+  }
+  function replay() {
+    stopClear(); clearStarted = false; cleared = false;
+    if (scene) scene.reset();
+    setHeroP(0);
+    runClear(scene ? 2700 : 500);
+  }
+  if (meterHint) meterHint.addEventListener('click', () => {
+    if (cleared) replay();
+    else if (!clearStarted) runClear(0);
+  });
 
   function startScene() {
-    if (!window.SwiftScene || params.has('noscene')) { stage.classList.add('static'); meter.classList.add('nogl'); return; }
+    if (!window.SwiftScene || params.has('noscene')) { stage.classList.add('static'); return; }
     try {
       const gl = document.createElement('canvas').getContext('webgl2');
-      if (!gl) { stage.classList.add('static'); meter.classList.add('nogl'); return; }
-      scene = SwiftScene.createHero(cv, { low: coarse || (navigator.hardwareConcurrency || 8) <= 4, frame: frameFn, static: reduce, onEvent: onHeroEvent });
+      if (!gl) { stage.classList.add('static'); return; }
+      scene = SwiftScene.createHero(cv, { low: coarse || (navigator.hardwareConcurrency || 8) <= 4, frame: frameFn, static: reduce });
+      scene.items.length && (meterN.textContent = String(scene.items.length));
+      if (params.has('introt')) scene.introAt(+params.get('introt')); else if (reduce || params.has('still')) scene.introNow(); else scene.play();
       stage.classList.add('live');
       scene.resize();
-      const loop = (t) => { requestAnimationFrame(loop); if (heroVisible) { scene.frame(t); const c = scene.count(); if (meterN.textContent !== String(c.n)) meterN.textContent = String(c.n); } };
-      requestAnimationFrame(loop);
+      let raf = 0;
+      const loop = (t) => { raf = requestAnimationFrame(loop); if (heroVisible) { scene.frame(t); const left = scene.left(); if (meterN.textContent !== String(left)) meterN.textContent = String(left); } };
+      raf = requestAnimationFrame(loop);
       addEventListener('resize', () => scene.resize());
       if (!coarse && !reduce) addEventListener('pointermove', (e) => scene.pointer((e.clientX / innerWidth - .5) * 2, (e.clientY / innerHeight - .5) * 2), { passive: true });
       if ('IntersectionObserver' in window) new IntersectionObserver((es) => { heroVisible = es[0].isIntersecting; }, { rootMargin: '10% 0px' }).observe(heroEl);
       window.__scene = scene;
-      if (reduce || params.has('still')) scene.jumpNow(+(params.get('scene') || 0)); else scene.start();
-    } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); meter.classList.add('nogl'); if (window.console) console.warn('scene off', err); }
+      if (!reduce && !params.has('introt') && !params.has('still')) runClear(2700);
+    } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); if (window.console) console.warn('scene off', err); }
   }
   startScene();
+  if (!scene) { setHeroP(0); if (!reduce) runClear(900); } else setHeroP(0);
 
   /* ==========================================================================
      SECTIONS
@@ -454,7 +478,7 @@
     try {
       if (!document.createElement('canvas').getContext('webgl2')) return;
       const cvG = $('gaugeCv');
-      const g = SwiftScene.createGauge(cvG, {
+      const g = SwiftScene.createHero(cvG, {
         scene: 'truck', az: 30, el: 33, low: coarse || (navigator.hardwareConcurrency || 8) <= 4, static: reduce,
         frame: (w, h) => ({ zoom: clamp(1.36 * w / h, .8, 1.95), x: 0, y: .03 }),
       });
