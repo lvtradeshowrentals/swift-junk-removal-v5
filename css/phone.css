@@ -96,7 +96,9 @@
   .fin-h { font-size: clamp(52px, 15vw, 80px); }
   .fin-bg img { right: -42%; top: 78%; width: 150vw; opacity: .55; }
   .fin-act .btn { flex: 1 1 100%; }
-  .foot { padding-top: 44px; padding-bottom: 88px; }
+  .foot { padding-top: 44px; padding-bottom: 0; }
+  .foot-bottom { padding-bottom: 8px; }
+  .foot-mark { margin: 18px 0 0; font-size: 30.5vw; letter-spacing: -.075em; line-height: .74; height: .5em; margin-bottom: env(safe-area-inset-bottom); }
   .foot-top { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-bottom: 36px; }
   .foot-cols { grid-template-columns: 1fr 1fr; }
   .foot-bottom { flex-direction: column; gap: 8px; }
