@@ -30,9 +30,9 @@
 .track:focus-visible { outline-offset: -4px; }
 .card { flex: 0 0 clamp(300px, 30.5vw, 456px); scroll-snap-align: start; background: #fff; border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 0 1px var(--line), 0 40px 70px -48px rgba(10, 14, 19, .4); transition: transform .6s var(--ease), box-shadow .6s var(--ease); }
 .card:hover { transform: translateY(-6px); box-shadow: 0 0 0 1px var(--line), 0 56px 80px -48px rgba(10, 14, 19, .5); }
-.card-art { aspect-ratio: 4 / 3; background: radial-gradient(90% 80% at 50% 38%, #fff 0%, var(--tint) 100%); overflow: hidden; position: relative; }
-.card-art img { position: absolute; left: -3%; top: -4%; width: 106%; height: auto; max-width: none; transition: transform 1s var(--ease); }
-.card:hover .card-art img { transform: scale(1.045) translateY(-1.5%); }
+.card-art { aspect-ratio: 4 / 3; background: var(--tint); overflow: hidden; position: relative; }
+.card-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease); }
+.card:hover .card-art img { transform: scale(1.05); }
 .card-body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
 .card h3 { font-family: var(--f-d); font-weight: 600; font-size: clamp(25px, 2.1vw, 31px); line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
 .card p { color: var(--mute); font-size: 16.5px; line-height: 1.5; }
