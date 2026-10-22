@@ -113,5 +113,5 @@
   .dock.dark .btn--ink { background: #fff; color: var(--ink); box-shadow: none; }
   .route { padding-left: 52px; }
   .route-end { margin-top: 44px; }
-  .route-end .btn { width: 100%; }
+  .route-end .btn { width: 100%; justify-content: space-between; }
 }

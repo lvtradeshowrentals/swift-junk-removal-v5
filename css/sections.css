@@ -421,6 +421,7 @@ label .hint, .lbl .hint { margin-top: 0; }
 .road .stop.on .st-n { fill: #0a0e13; }
 @keyframes stPulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
 .route-end { position: relative; z-index: 1; display: flex; justify-content: center; margin: clamp(48px, 6vw, 80px) auto 0; }
-.route-end .btn { --h: 60px; padding: 0 34px; font-size: 18px; transition: background .5s, color .5s, transform .5s var(--ease); }
-.route-end.on .btn { background: var(--hot); color: var(--ink); }
+.route-end .btn { --h: 64px; padding: 0 10px 0 32px; gap: 18px; font-size: 18px; background: #fff; color: var(--ink); box-shadow: 0 18px 40px -20px rgba(255, 255, 255, .35); }
+.route-end .btn svg { width: 44px; height: 44px; padding: 11px; border-radius: 50%; background: var(--hot); color: #fff; transition: transform .4s var(--ease); }
+.route-end .btn:hover svg { transform: translateX(4px); }
 @media (prefers-reduced-motion: reduce) { .road .stop.on .st-halo,  }
