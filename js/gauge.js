@@ -36,10 +36,16 @@
   };
   var vcount = 0;
   /* x, base: feet from the cab wall / floor. w, h: the slot in feet. */
+  var seed = 7, rnd = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
   function item(stop, x, base, w, hh, kind, ghost) {
-    var art = ART[kind], parts = art[2](vcount++);
-    var inner = G({ transform: 'scale(' + ((w * U - 2) / art[0]).toFixed(3) + ' ' + ((hh * U - 2) / art[1]).toFixed(3) + ')' }, parts);
-    var g = G({ transform: 'translate(' + (X0 + x * U + 1).toFixed(1) + ' ' + (YB - base * U - 1).toFixed(1) + ')' }, [inner]);
+    var art = ART[kind], parts = art[2](vcount++), loose = kind === 'box' || kind === 'bag';
+    // a real load is a little ragged: pieces are a touch narrower than their slot, sit slightly off-centre or tilted,
+    // and the tops of the stacks don't all reach the same height
+    var w2 = loose ? w * (.78 + rnd() * .17) : w, x2 = x + (w - w2) * rnd(), tilt = loose && !ghost ? (rnd() - .5) * 7 : 0;
+    if (loose && !ghost) hh -= .06 + rnd() * .22;                                  // little gaps between the layers
+    if (kind === 'box' && base + hh > 5.4 && !ghost) hh -= .3 + rnd() * 1.5;      // uneven tops
+    var inner = G({ transform: 'scale(' + ((w2 * U - 2) / art[0]).toFixed(3) + ' ' + ((hh * U - 2) / art[1]).toFixed(3) + ')' }, parts);
+    var g = G({ transform: 'translate(' + (X0 + x2 * U + 1).toFixed(1) + ' ' + (YB - base * U - 1).toFixed(1) + ') rotate(' + tilt.toFixed(2) + ' ' + (w2 * U / 2).toFixed(1) + ' 0)' }, [inner]);
     return { stop: stop, g: g, ghost: !!ghost, base: base, x: x };
   }
   /* The bed is packed floor to ceiling in vertical stacks, so every foot you add is a foot of real, full-height load. */
