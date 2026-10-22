@@ -1,0 +1,5 @@
+_dev/shots/
+_dev/node_modules/
+_dev/data/primary.json
+_dev/data/roads.json
+_dev/data/b_*.json

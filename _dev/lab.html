@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>lab</title>
+<style>
+  html, body { margin: 0; height: 100%; background: linear-gradient(180deg, #e9edf1, #f8f9fa); overflow: hidden; }
+  canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+</style>
+<canvas id="c"></canvas>
+<script>if (new URLSearchParams(location.search).get('bg') === 'none') document.documentElement.style.background = document.body.style.background = 'transparent';</script>
+<script src="../js/scene.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const hero = SwiftScene.createHero(document.getElementById('c'), {
+    preserve: true,
+    az: q.has('az') ? +q.get('az') : undefined, el: q.has('el') ? +q.get('el') : undefined,
+    dist: q.has('dist') ? +q.get('dist') : undefined, fov: q.has('fov') ? +q.get('fov') : undefined,
+    key: q.has('key') ? +q.get('key') : undefined, env: q.has('env') ? +q.get('env') : undefined,
+    static: q.has('static'), scene: q.get('scene') || undefined, zoom: q.has('fz') ? +q.get('fz') : undefined, fy: q.has('fy') ? +q.get('fy') : undefined,
+    frame: q.has('room') ? (() => ({ zoom: +q.get('fz') || 1, x: +q.get('fx') || 0, y: +q.get('fy') || 0 })) : undefined,
+  });
+  window.hero = hero;
+  hero.introNow();
+  hero.setNow(+(q.get('p') || 0));
+  if (q.has('load')) hero.setLoad(+q.get('load'));
+  let go = true;
+  (function loop(t) { if (go) hero.frame(t); requestAnimationFrame(loop); })(0);
+  window.addEventListener('resize', hero.resize);
+  window.__ready = true;
+</script>
