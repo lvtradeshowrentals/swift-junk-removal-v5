@@ -187,7 +187,8 @@ export function plant() {
   const g = new THREE.Group();
   g.add(at(cyl(.36, .26, .55, clay(C.terracotta, { r: .9 }), 28), 0, .275, 0));
   g.add(at(cyl(.38, .38, .08, clay('#c27a5a', { r: .9 }), 28), 0, .57, 0));
-  g.add(at(cyl(.3, .3, .02, clay('#4a3b30', { r: 1 }), 24), 0, .6, 0));
+  // the soil mounds a little above the rim (its top must not share a plane with the rim's, or the two flicker)
+  g.add(at(cyl(.28, .31, .06, clay('#4a3b30', { r: 1 }), 24), 0, .625, 0));
   const lf = clay(C.leaf, { r: .8, sheen: .4 });
   [[0, 0], [.35, 1.1], [-.4, 2.2], [.2, 3.3], [-.2, 4.4], [.45, 5.3], [-.3, 6.0]].forEach(([tilt, ry], i) => {
     const leaf = sph(.16, lf, .5, 1.9 + (i % 3) * .3, .2, 16);
