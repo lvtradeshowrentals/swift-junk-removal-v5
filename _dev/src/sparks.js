@@ -18,7 +18,7 @@ ${GLSL_NOISE}
 void main(){
   float q = (uFront - dsweep(position)) * uSign / uQS;
   if (uGather > .5) {
-    if (q < 0.0 || q > 1.0) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; vA = 0.; vC = vec3(0.); return; }
+    if (q < 0.0 || q > 1.0 || aR.x > .34) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; vA = 0.; vC = vec3(0.); return; }
     float e = min(q * 5., 1.);
     vec3 p0 = position + vec3((aR.y - .5) * .9, .35 + aR.x * .9, (aR.z - .5) * .9) * e;
     vec3 tg = uTarget + vec3((aR.y - .5) * .5, (aR.x - .5) * 1.4, (aR.z - .5) * 1.5);
@@ -28,7 +28,7 @@ void main(){
     p.z += sin(g * 6.2832 + aR.x * 6.) * .18 * (1. - g);
     vec4 mv = modelViewMatrix * vec4(p, 1.);
     gl_Position = projectionMatrix * mv;
-    float sz = (.06 + aR.w * .11) * (1. - g * .45);
+    float sz = (.05 + aR.w * .08) * (1. - g * .45);
     gl_PointSize = sz * uScale / -mv.z;
     vA = smoothstep(0., .04, q) * (1. - smoothstep(.9, 1., q));
     vC = mix(aCol, uAccent, smoothstep(.0, .35, q));

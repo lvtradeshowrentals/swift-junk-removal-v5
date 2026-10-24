@@ -131,7 +131,7 @@ export function createHero(canvas, opt = {}) {
     const erase = sweep(SH, 0, (to - from) / 3.6, 0, 1, from, to);
     // the heap in the truck builds as the stream arrives; each surge nudges the suspension
     const pack = tween(2.4, (k) => { S.pack = E.smooth(k); cargo.scale.y = Math.max(.001, S.pack); }, E.lin, .9);
-    const flare = tween(2.6, () => { burst.emit(target.x + .1, 1.7 + Math.random() * .9, LANE + (Math.random() - .5) * 1.3, low ? 1 : 2, { speed: 1.1, up: .3, spread: .8, size: .22, life: .6, jit: .15, vx: .7 }); }, E.lin, .8);
+    const flare = tween(2.6, () => { if (Math.random() < .5) burst.emit(target.x + .1, 1.7 + Math.random() * .9, LANE + (Math.random() - .5) * 1.3, 1, { speed: 1.0, up: .3, spread: .7, size: .16, life: .6, jit: .15, vx: .7 }); }, E.lin, .8);
     const kicks = tween(2.6, () => { if (Math.random() < .08) S.vy -= .35; }, E.lin, 1.0);
     await Promise.all([erase, pack, flare, kicks]);
     counting = false; sparkItems.visible = false; S.focusTarget = 0; S.left = 0; emit({ type: 'count', left: 0, total });
