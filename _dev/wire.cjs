@@ -45,7 +45,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   await p.evaluate(() => { const l = document.querySelectorAll('.card a.link')[1]; window.scrollTo(0, l.getBoundingClientRect().top + scrollY - 400); }); await wait(900);
   console.log('card link hit', await hit('.card:nth-child(2) a.link'));
   await p.mouse.click(...(await center('.card:nth-child(2) a.link'))); await wait(2400);
-  console.log('card link -> quote top', await top('#quote'), 'furniture checked', await p.evaluate(() => document.querySelector('input[value=furniture]').checked));
+  console.log('card link -> quote top', await top('#quote'), 'construction checked', await p.evaluate(() => document.querySelector('input[value=construction]').checked));
   // dock (phone) + FAQ + finale buttons
   await p.evaluate(() => { const f = document.getElementById('faq'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY); }); await wait(900);
   await p.mouse.click(...(await center('#q-1'))); await wait(700);

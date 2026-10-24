@@ -115,77 +115,51 @@
      HERO SCENE
      ========================================================================== */
   const heroEl = $('top'), stage = $('stage'), cv = $('stageCv');
-  const meter = $('meter'), meterN = $('meterN'), meterBar = $('meterBar'), meterHint = $('meterHint');
-  const hintTx = meterHint ? qs('span', meterHint) : null;
+  const meter = $('meter'), meterN = $('meterN'), meterBar = $('meterBar'), meterHint = $('meterHint'), meterLbl = $('meterLbl');
   const coarse = matchMedia('(pointer: coarse)').matches;
-  let scene = null, heroVisible = true, lastP = -1;
-  const posterB = qs('.poster--b'), posterA = qs('.poster--a');
+  let scene = null, heroVisible = true;
+  const posterA = qs('.poster--a'), posterB = qs('.poster--b');
 
+  /* where the curb sits in the frame: right of the headline on a wide screen, under it on a phone */
   function frameFn(w, h, portrait) {
-    if (portrait) {
-      const z = clamp(1.125 * w / h, .4, 1.2);
-      return { zoom: z, x: 0, y: h < 700 ? -.012 : .04 };
-    }
-    const z = Math.min(clamp(h / 780, .8, 1.4), .65 * w / h);
-    return { zoom: z, x: w > 1500 ? .2 : .215, y: .035 };
+    if (portrait) return { zoom: clamp(1.2 * w / h, .4, 1.1), x: -.03, y: h < 700 ? -.01 : .035 };
+    const z = Math.min(clamp(h / 1000, .7, 1.25), .6 * w / h);
+    return { zoom: z, x: w > 1500 ? .2 : .22, y: .045 };
   }
 
-  /* the clear-out plays by itself shortly after you arrive; the button replays it */
-  let clearStarted = false, cleared = false, clearTimer = 0, clearRaf = 0;
-  const hintUse = meterHint ? qs('use', meterHint) : null;
-  function setHeroP(p) {
-    lastP = p;
-    if (scene) scene.set(p);
-    else { if (posterB) posterB.style.opacity = String(p); if (posterA) posterA.style.opacity = String(1 - p); }
-    if (meterBar) meterBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-    const t = p >= 1 ? 'Replay' : clearStarted ? 'Clearing' : 'Clear the room';
-    if (hintTx && hintTx.textContent !== t) { hintTx.textContent = t; if (hintUse) hintUse.setAttribute('href', p >= 1 ? '#i-replay' : '#i-down'); }
-    meter.classList.toggle('is-clear', p >= 1);
-    if (meterHint) meterHint.classList.toggle('busy', clearStarted && p < 1);
+  /* the scene reports what it is doing; the readout and the button follow it */
+  function onHeroEvent(e) {
+    if (e.type === 'count') {
+      if (meterN.textContent !== String(e.left)) meterN.textContent = String(e.left);
+      if (meterBar) meterBar.style.transform = 'scaleX(' + (1 - e.left / e.total).toFixed(3) + ')';
+    } else if (e.type === 'phase') {
+      meter.dataset.phase = e.name;
+      const done = e.name === 'done';
+      meterHint.hidden = !done;
+      meter.classList.toggle('is-clear', done);
+      if (meterLbl) meterLbl.textContent = done ? 'left at the curb' : e.name === 'build' ? 'at the curb' : 'pieces left at the curb';
+    }
   }
-  function stopClear() { clearTimeout(clearTimer); cancelAnimationFrame(clearRaf); }
-  function runClear(delay) {
-    stopClear(); cleared = false;
-    clearTimer = setTimeout(() => {
-      clearStarted = true;
-      const t0 = performance.now(), dur = 3800;
-      const step = () => { const k = clamp((performance.now() - t0) / dur); setHeroP(k); if (k < 1) clearRaf = requestAnimationFrame(step); else cleared = true; };
-      step();
-    }, delay);
-  }
-  function replay() {
-    stopClear(); clearStarted = false; cleared = false;
-    if (scene) scene.reset();
-    setHeroP(0);
-    runClear(scene ? 2700 : 500);
-  }
-  if (meterHint) meterHint.addEventListener('click', () => {
-    if (cleared) replay();
-    else if (!clearStarted) runClear(0);
-  });
+  if (meterHint) meterHint.addEventListener('click', () => { if (scene) { meterHint.hidden = true; scene.replay(); } });
 
   function startScene() {
-    if (!window.SwiftScene || params.has('noscene')) { stage.classList.add('static'); return; }
+    if (!window.SwiftScene || params.has('noscene')) { stage.classList.add('static'); meter.classList.add('nogl'); return; }
     try {
       const gl = document.createElement('canvas').getContext('webgl2');
-      if (!gl) { stage.classList.add('static'); return; }
-      scene = SwiftScene.createHero(cv, { low: coarse || (navigator.hardwareConcurrency || 8) <= 4, frame: frameFn, static: reduce });
-      scene.items.length && (meterN.textContent = String(scene.items.length));
-      if (params.has('introt')) scene.introAt(+params.get('introt')); else if (reduce || params.has('still')) scene.introNow(); else SPL.hero(() => scene.play());
+      if (!gl) { stage.classList.add('static'); meter.classList.add('nogl'); return; }
+      scene = SwiftScene.createHero(cv, { low: coarse || (navigator.hardwareConcurrency || 8) <= 4, frame: frameFn, static: reduce, onEvent: onHeroEvent });
       stage.classList.add('live');
       scene.resize();
-      let raf = 0;
-      const loop = (t) => { raf = requestAnimationFrame(loop); if (heroVisible) { scene.frame(t); const left = scene.left(); if (meterN.textContent !== String(left)) meterN.textContent = String(left); } };
-      raf = requestAnimationFrame(loop);
+      const loop = (t) => { requestAnimationFrame(loop); if (heroVisible) scene.frame(t); };
+      requestAnimationFrame(loop);
       addEventListener('resize', () => scene.resize());
       if (!coarse && !reduce) addEventListener('pointermove', (e) => scene.pointer((e.clientX / innerWidth - .5) * 2, (e.clientY / innerHeight - .5) * 2), { passive: true });
       if ('IntersectionObserver' in window) new IntersectionObserver((es) => { heroVisible = es[0].isIntersecting; }, { rootMargin: '10% 0px' }).observe(heroEl);
       window.__scene = scene;
-      if (!reduce && !params.has('introt') && !params.has('still')) SPL.hero(() => runClear(2700));
-    } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); if (window.console) console.warn('scene off', err); }
+      if (reduce || params.has('still')) scene.jumpNow(params.get('still') === 'final' || reduce); else SPL.hero(() => scene.start());
+    } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); meter.classList.add('nogl'); if (window.console) console.warn('scene off', err); }
   }
   startScene();
-  if (!scene) { setHeroP(0); if (!reduce) SPL.hero(() => runClear(900)); } else setHeroP(0);
 
   /* ==========================================================================
      SECTIONS

@@ -1,1 +1,1 @@
-export { createHero } from './hero.js';
+export { createHero } from './curb-hero.js';

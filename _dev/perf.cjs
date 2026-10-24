@@ -10,15 +10,14 @@ const SIZES = { desktop: { width: 1512, height: 900 }, phone: { width: 390, heig
   const p = await b.newPage();
   await p.setViewport(SIZES[size]);
   p.on('pageerror', (e) => console.log('PAGEERROR', e.message));
-  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?nosmooth', { waitUntil: 'load' });
+  await p.goto('file:///' + path.join(__dirname, '..', 'index.html').split(path.sep).join('/') + '?nosmooth&nosplash', { waitUntil: 'load' });
   await new Promise((r) => setTimeout(r, 4500));
   const run = (label, fn) => p.evaluate(({ label, fn }) => new Promise((res) => {
     const f = new Function('t', fn);
     let n = 0, t0 = performance.now(), worst = 0, last = t0;
     (function tick(t) { const d = t - last; last = t; if (d > worst) worst = d; f((t - t0) / 3000); if (++n < 400 && t - t0 < 3000) requestAnimationFrame(tick); else res({ label, fps: Math.round(n / ((t - t0) / 1000)), worstMs: Math.round(worst) }); })(t0);
   }), { label, fn });
-  console.log(await run('idle hero', ''));
-  console.log(await run('scrub hero', 'const h=document.getElementById("top");const tr=h.offsetHeight-innerHeight;scrollTo(0,innerHeight*.05+t*(tr*.9-innerHeight*.05));'));
+  for (let i = 0; i < 6; i++) console.log(await run('hero ' + (i * 3 + 2) + 's', ''));
   console.log(await run('past hero', 'scrollTo(0,6000)'));
   await p.evaluate(() => { const q = document.getElementById('gauge'); scrollTo(0, q.getBoundingClientRect().top + scrollY - 100); });
   await new Promise((r) => setTimeout(r, 1500));

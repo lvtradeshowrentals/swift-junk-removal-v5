@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:linear-gradient(#e6eaee,#f7f8fa)}canvas{position:fixed;inset:0;width:100vw;height:100vh}</style>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500..800&display=swap" rel="stylesheet">
+<canvas id="c"></canvas><script src="shots/dev.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+document.fonts.load('800 40px "Funnel Display"').then(() => document.fonts.ready).then(() => {
+  (q.has('world') ? Dev.labWorld : Dev.labTruck)(document.getElementById('c'), { tx: +(q.get('tx') || 0), fx: +(q.get('fx') || 0), fy: +(q.get('fy') || 0), lx: +(q.get('lx') || 0), lz: +(q.get('lz') || 0), az: +(q.get('az') || 38), el: +(q.get('el') || 22), dist: +(q.get('dist') || 30), zoom: +(q.get('zoom') || 1), door: +(q.get('door') || 0) });
+});
+</script>

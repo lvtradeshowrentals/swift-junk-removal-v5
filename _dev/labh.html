@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>labh</title>
+<style>html,body{margin:0;height:100%;background:linear-gradient(180deg,#e6eaee,#f6f7f9);overflow:hidden}canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}</style>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500..800&display=swap" rel="stylesheet">
+<canvas id="c"></canvas><script src="../js/scene.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+window.events = [];
+document.fonts.load('800 40px "Funnel Display"').then(() => document.fonts.ready).then(async () => {
+  const hero = SwiftScene.createHero(document.getElementById('c'), {
+    preserve: true, static: true, onEvent: (e) => events.push(e),
+    frame: (w, h, portrait) => ({ zoom: +(q.get('fz') || 1.15), x: +(q.get('fx') || 0), y: +(q.get('fy') || 0.0) }),
+    dist: q.has('dist') ? +q.get('dist') : undefined, az: q.has('az') ? +q.get('az') : undefined, el: q.has('el') ? +q.get('el') : undefined,
+    tx: q.has('tx') ? +q.get('tx') : undefined, tz: q.has('tz') ? +q.get('tz') : undefined, ty: q.has('ty') ? +q.get('ty') : undefined,
+  });
+  window.hero = hero;
+  if (q.has('still')) hero.jumpNow(q.get('still') === 'final'); else if (q.has('replay')) hero.replay(); else hero.start();
+  if (q.has('adv')) await hero.advance(+q.get('adv'));
+  hero.state.last = 0; hero.frame(performance.now()); hero.frame(performance.now() + 16);
+  window.__done = true;
+});
+</script>

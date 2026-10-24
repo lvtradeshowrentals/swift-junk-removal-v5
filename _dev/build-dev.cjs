@@ -1,0 +1,1 @@
+require('esbuild').build({ entryPoints: ['src/dev-truck.js'], bundle: true, format: 'iife', globalName: 'Dev', outfile: 'shots/dev.js', target: ['es2019'], logLevel: 'error' }).catch(() => process.exit(1));
