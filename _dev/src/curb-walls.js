@@ -192,9 +192,9 @@ export function buildCurbSet() {
     [[-2.5, -4.55, 1.2, 14, '#6f8f6a'], [-.6, -4.62, 1.5, 17, '#78986c'], [1.0, -4.5, 1.1, 13, '#6a8a66'], [4.55, -3.6, 1.2, 15, '#6f8f6a'], [-3.6, 3.7, 1.3, 16, '#78986c'], [-4.2, 1.9, 1.0, 12, '#6a8a66']].forEach(([x, z, s, n, c], i) => { const a = agave(n, s, c, i + 2); a.position.set(x, 0, z); a.rotation.y = i; g.add(a); });
     [[-1.6, -4.55], [3.9, -3.5]].forEach(([x, z], i) => { const y = yuccaTall(1.0 + i * .15, i + 5); y.position.set(x, 0, z); g.add(y); });
     [[-3.9, 3.0, 1.0], [-2.1, 4.4, .8], [4.3, -3.9, .9]].forEach(([x, z, s], i) => { const b = barrel(s); b.position.set(x, 0, z); g.add(b); });
-    [[-4.1, 4.3, 1, 1.1], [-3.0, 2.6, 2, .7], [-4.45, 3.4, 3, .5], [-.5, -4.35, 4, .5], [2.4, -4.4, 5, .6], [4.6, -3.0, 6, .45]].forEach(([x, z, sd, r], i) => { const b = Y.boulder(sd, r, ['#b3a08a', '#a89580', '#bfae98'][i % 3]); b.position.set(x, 0, z); b.rotation.y = i; g.add(b); });
-    const b1 = bin('#4b5560', '#39424b'); b1.position.set(-4.4, 0, 1.2); b1.rotation.y = Math.PI / 2 - .05; g.add(b1);
-    const b2 = bin('#2f6bb5', '#25558f'); b2.position.set(-4.4, 0, 2.5); b2.rotation.y = Math.PI / 2 + .05; g.add(b2);
+    [[-3.9, 1.1, 1, .9], [-3.0, 2.6, 2, .7], [-2.4, 4.4, 3, .5], [-.5, -4.35, 4, .5], [2.4, -4.4, 5, .6], [4.6, -3.0, 6, .45]].forEach(([x, z, sd, r], i) => { const b = Y.boulder(sd, r, ['#b3a08a', '#a89580', '#bfae98'][i % 3]); b.position.set(x, 0, z); b.rotation.y = i; g.add(b); });
+    const b1 = bin('#4b5560', '#39424b'); b1.position.set(-4.4, 0, 3.4); b1.rotation.y = Math.PI / 2 - .05; g.add(b1);
+    const b2 = bin('#2f6bb5', '#25558f'); b2.position.set(-4.4, 0, 4.4); b2.rotation.y = Math.PI / 2 + .05; g.add(b2);
     const mb = mailbox(); mb.position.set(-1.6, 0, 4.55); mb.rotation.y = -Math.PI / 2 + .1; g.add(mb);
     // entry planters
     [[2.3, -4.0], [3.95, -4.0]].forEach(([x, z], i) => { const pot = new THREE.Group(); pot.add(at(cyl(.34, .24, .55, clay('#a9593a', { r: .8 }), 20), 0, .28, 0)); pot.add(at(cyl(.36, .36, .07, clay('#b9694a', { r: .8 }), 20), 0, .58, 0)); const y = agave(11, .6, '#7a9a6c', 8 + i); y.position.y = .6; pot.add(y); pot.position.set(x, 0, z); g.add(pot); });

@@ -82,8 +82,8 @@
 @keyframes stDark { to { color: #000; } }
 
 /* step 1: camera, then Messages */
-.cam { position: absolute; inset: 0; background: linear-gradient(180deg, #dfe5ea, #f4f6f8); z-index: 2; color: #fff; }
-.cam-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 66% 50%; transform: scale(1.08); }
+.cam { position: absolute; inset: 0; background: #0a0c0f; z-index: 2; color: #fff; }
+.cam-img { position: absolute; left: 0; top: 47%; width: 100%; height: auto; aspect-ratio: 1000 / 671; transform: translateY(-50%); }  /* the whole photo, as the shot will arrive */
 .cam-top { position: absolute; top: 4.4em; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 1.5em; z-index: 3; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .35)); }
 .cam-top svg { width: 1.5em; height: 1.5em; } .cam-top .chev { width: 1.7em; }
 .cam-br { position: absolute; width: 2.1em; height: 2.1em; border: 0 solid rgba(255, 255, 255, .95); opacity: 0; filter: drop-shadow(0 0 3px rgba(0, 0, 0, .25)); }

@@ -73,12 +73,14 @@ export function buildBoxTruck(font = '"Funnel Display", system-ui, sans-serif') 
   /* ---- cab (a profile, extruded) ---- */
   const sh = new THREE.Shape();
   sh.moveTo(-4.35, .72); sh.lineTo(-4.35, 1.85); sh.quadraticCurveTo(-4.35, 2.0, -4.22, 2.12); sh.lineTo(-3.55, 2.82);
-  sh.quadraticCurveTo(-3.5, 2.88, -3.38, 2.88); sh.lineTo(-2.62, 2.88); sh.quadraticCurveTo(-2.5, 2.88, -2.5, 2.76); sh.lineTo(-2.5, .72); sh.closePath();
+  sh.quadraticCurveTo(-3.5, 2.88, -3.38, 2.88); sh.lineTo(-2.62, 2.88); sh.quadraticCurveTo(-2.5, 2.88, -2.5, 2.76); sh.lineTo(-2.5, .72);
+  { const R = .7, dx = Math.sqrt(R * R - .17 * .17); sh.lineTo(-3.55 + dx, .72); sh.absarc(-3.55, .55, R, Math.asin(.17 / R), Math.PI - Math.asin(.17 / R), false); }  // a real wheel arch, so the tyre never pokes through the panel
+  sh.closePath();
   const cabGeo = new THREE.ExtrudeGeometry(sh, { depth: 2.06, bevelEnabled: true, bevelSize: .1, bevelThickness: .1, bevelSegments: 5, curveSegments: 18 });
   cabGeo.translate(0, 0, -1.03);
   const cab = new THREE.Mesh(cabGeo, white); cab.castShadow = cab.receiveShadow = true; body.add(cab);
   // lower cab skirt in dark plastic
-  [1, -1].forEach((s) => body.add(put(box(1.86, .3, .05, dark2, .02, 1), -3.42, .86, s * 1.16)));
+  [1, -1].forEach((s) => body.add(put(box(.34, .3, .05, dark2, .02, 1), -2.67, .86, s * 1.16)));
   // windshield + side windows
   const ws = box(.98, .04, 1.86, glass, .015, 1); ws.position.set(-3.985, 2.5, 0); ws.rotation.z = Math.atan2(.7, .67); body.add(ws);
   const winShape = new THREE.Shape(); winShape.moveTo(-4.04, 1.96); winShape.lineTo(-2.66, 1.96); winShape.lineTo(-2.66, 2.7); winShape.lineTo(-3.52, 2.7); winShape.closePath();
