@@ -122,7 +122,7 @@
 
   /* where the curb sits in the frame: right of the headline on a wide screen, under it on a phone */
   function frameFn(w, h, portrait) {
-    if (portrait) return { zoom: clamp(1.2 * w / h, .4, 1.1), x: -.03, y: h < 700 ? -.01 : .035 };
+    if (portrait) return { zoom: clamp(1.08 * w / h, .4, 1.0), x: -.03, y: h < 700 ? .0 : .075 };
     const z = Math.min(clamp(h / 1000, .7, 1.25), .6 * w / h);
     return { zoom: z, x: w > 1500 ? .2 : .22, y: .045 };
   }
