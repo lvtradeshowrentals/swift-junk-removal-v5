@@ -6,6 +6,8 @@ import { makeStudio } from './studio.js';
 import { makeCurbStage } from './curb-stage.js';
 import { buildCurbSet, SET } from './curb-walls.js';
 import { buildPile } from './curb-pile.js';
+import * as P from './props.js';
+import * as H from './props-home.js';
 import { buildBoxTruck } from './boxtruck.js';
 import { surfaceSparks, makeBurst } from './sparks.js';
 
@@ -51,8 +53,9 @@ export function createHero(canvas, opt = {}) {
   const cargo = new THREE.Group(); {
     const cav = truck.cavity, cols = ['#c9a278', '#bfa07a', '#587a8c', '#6d93a7', '#cf9a5f', '#efede8', '#2b3138', '#8d969e', '#e8793a', '#dcc19b', '#3f8b82', '#d3b283'];
     let seed = 11; const R = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    for (let x = cav.x0 + .1; x < cav.x1 - .05;) {
-      const w = Math.min(.7 + R() * .7, cav.x1 - x); let y = cav.y0;
+    const xf = cav.x1 - 1.0;   // the last metre by the door is the fridge, the washer and a box, so the open back looks properly full
+    for (let x = cav.x0 + .1; x < xf - .3;) {
+      const w = Math.min(.7 + R() * .7, xf - .3 - x); let y = cav.y0;
       while (y < cav.y1 - .3) {
         const h = Math.min(.5 + R() * .9, cav.y1 - y), d = .9 + R() * .7, c = cols[(R() * cols.length) | 0];
         const mat = new THREE.MeshStandardMaterial({ color: c, roughness: .85 });
@@ -62,7 +65,12 @@ export function createHero(canvas, opt = {}) {
       }
       x += w * .9;
     }
-    mergeItem(cargo); cargo.scale.set(1, .001, 1); cargo.position.y = cav.y0;
+    const stand = (o, x, z, k, ry = Math.PI / 2) => { o.traverse((m) => { if (m.isMesh) { const q = m.material; m.material = new THREE.MeshStandardMaterial({ color: q.color, map: q.map || null, roughness: q.roughness ?? .6, metalness: q.metalness || 0, vertexColors: !!q.vertexColors }); m.castShadow = false; } });   // plain materials: the pile's dissolve must not hide what is already loaded
+      o.scale.setScalar(k); o.rotation.y = ry; o.position.set(x, 0, z); cargo.add(o); };
+    stand(P.fridge(), cav.x1 - .62, -cav.z * .5, .74);
+    stand(P.washer(), cav.x1 - .62, cav.z * .5, .76);
+    const bx = H.labeledBox(.95, .72, .8, 'BOOKS', { c: '#bfa07a' }); stand(bx, cav.x1 - .62, cav.z * .5, .8, Math.PI / 2 + .08); bx.position.y = 1.07;
+    mergeItem(cargo); cargo.scale.set(1, .001, 1); cargo.visible = false; cargo.position.y = cav.y0;
     truck.body.add(cargo);
   }
 
@@ -130,7 +138,7 @@ export function createHero(canvas, opt = {}) {
     const from = Math.min(...items.map((it) => it.s)) - 1.9, to = F1 + GATHER_QS + .2;
     const erase = sweep(SH, 0, (to - from) / 3.6, 0, 1, from, to);
     // the heap in the truck builds as the stream arrives; each surge nudges the suspension
-    const pack = tween(2.4, (k) => { S.pack = E.smooth(k); cargo.scale.y = Math.max(.001, S.pack); }, E.lin, .9);
+    const pack = tween(2.4, (k) => { S.pack = E.smooth(k); cargo.scale.y = Math.max(.001, S.pack); cargo.visible = S.pack > .02; }, E.lin, .9);
     const flare = tween(2.6, () => { if (Math.random() < .5) burst.emit(target.x + .1, 1.7 + Math.random() * .9, LANE + (Math.random() - .5) * 1.3, 1, { speed: 1.0, up: .3, spread: .7, size: .16, life: .6, jit: .15, vx: .7 }); }, E.lin, .8);
     const kicks = tween(2.6, () => { if (Math.random() < .08) S.vy -= .35; }, E.lin, 1.0);
     await Promise.all([erase, pack, flare, kicks]);
@@ -142,7 +150,7 @@ export function createHero(canvas, opt = {}) {
   /* ---- sequences ---- */
   async function build() {
     emit({ type: 'phase', name: 'build' });
-    S.rise = 0; truck.root.visible = false; sparkItems.visible = sparkSet.visible = true; cargo.scale.y = .001; S.pack = 0;
+    S.rise = 0; truck.root.visible = false; sparkItems.visible = sparkSet.visible = true; cargo.scale.y = .001; cargo.visible = false; S.pack = 0;
     hideAll(); items.forEach((it) => { it.root.visible = true; });
     const rise = tween(1.1, (k) => { S.rise = k; }, E.outCubic);
     const w = sweep(SHW, 1, 1.45, .25);
@@ -169,7 +177,7 @@ export function createHero(canvas, opt = {}) {
     emit({ type: 'phase', name: 'done' });
   }
   function resetAll() {
-    S.vy = 0; S.ty = 0; S.pack = 0; S.left = total; truck.door(0); cargo.scale.y = .001;
+    S.vy = 0; S.ty = 0; S.pack = 0; S.left = total; truck.door(0); cargo.scale.y = .001; cargo.visible = false;
     truck.root.visible = false; truck.root.position.x = X_FAR; PU[0].uGather.value = 0; PU[0].uQS.value = 2.4; counting = false;
     items.forEach((it) => { it.root.visible = true; });
   }
