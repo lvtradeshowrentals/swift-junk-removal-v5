@@ -18,6 +18,7 @@ function piece(name, prop, x, y, z, o = {}) {
   w.scale.setScalar(PILE.scale * (o.s || 1));
   w.position.set(x, y, z);
   const root = new THREE.Group(); root.add(w); root.userData.name = name; root.userData.stow = o.stow || 1; root.userData.kind = o.kind || 'item';
+  if (o.ground) { root.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(root); w.position.y += y - b.min.y; }  // rest the lowest point on the floor
   return root;
 }
 const box = (txt, w, h, d, c) => H.labeledBox(w, h, d, txt, c ? { c } : {});
@@ -35,7 +36,7 @@ export function buildPile() {
   add(piece('TV', P.tv(2.0, 1.15), 4.35, .0, 2.1, { rx: -.1, ry: 1.0 }));
   add(piece('Toilet', S.toilet(), 4.6, 0, 3.6, { ry: .9 }));
   /* front: the small stuff you can name at a glance */
-  add(piece('Bike', P.bike(), 1.5, 0, 3.4, { ry: .75, rz: .22 }));
+  add(piece('Bike', P.bike(), 1.5, 0, 3.4, { ry: .75, rz: .22, ground: 1 }));
   add(piece('Box', box('KITCHEN', 1.25, .95, 1.0), 2.85, 0, 3.55, { ry: .15 }));
   add(piece('Box', box('BOOKS', 1.0, .8, .85, '#bfa07a'), 2.9, .86, 3.6, { ry: -.3 }));
   add(piece('Bag', P.bag(.52, 1), 3.75, 0, 4.2, { ry: .4 }));
