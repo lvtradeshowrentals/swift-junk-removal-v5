@@ -26,30 +26,22 @@ export function buildPile() {
   const items = [];
   const add = (r) => { items.push(r); return r; };
 
-  /* back row (nearest the truck): the tall things */
-  add(piece('Fridge', P.fridge(), 2.95, 0, .35, { ry: .12 }));
-  add(piece('Washer', P.washer(), 4.0, 0, .15, { ry: -.1 }));
-  add(piece('Mattress', (() => { const m = P.mattress(1.9, .42, 2.9); m.rotation.x = -Math.PI / 2; m.position.set(0, 1.45, 0); const g = new THREE.Group(); g.add(m); return g; })(), 3.45, .0, 1.05, { rx: -.3, ry: -.12 }));
-  add(piece('Drywall', S.drywallLean(5), 4.6, 0, 1.15, { ry: -1.2 }));
-  /* middle: the big soft stuff */
-  add(piece('Couch', P.sofa(3.1), 3.55, 0, 2.35, { ry: -.3 }));
-  add(piece('Armchair', P.armchair(), 2.35, 0, 2.2, { ry: .6 }));
-  add(piece('Box', box('KITCHEN', 1.25, .95, 1.0), 2.4, 0, 1.2, { ry: .15 }));
-  add(piece('Box', box('BOOKS', 1.0, .8, .85, '#bfa07a'), 2.45, .86, 1.25, { ry: -.3 }));
-  add(piece('Toilet', S.toilet(), 4.75, 0, 2.15, { ry: 1.0 }));
-  /* the heap's crown */
-  add(piece('TV', P.tv(2.0, 1.15), 3.6, 1.0, 2.05, { rx: -.55, ry: -.35 }));
-  add(piece('Bike', P.bike(), 3.4, .95, 2.4, { ry: .9, rz: .25 }));
-  add(piece('Lamp', P.lamp(), 4.2, .72, 2.1, { rz: 1.25, ry: .6 }));
-  add(piece('Branches', Y.branchPile(3), 4.15, 0, 3.0, { ry: .4, s: .85 }));
-  /* front row: the low stuff you can see over */
-  add(piece('Bag', P.bag(.52, 1), 2.75, 0, 3.2, { ry: .4 }));
-  add(piece('Bag', P.bag(.46, 2), 3.2, 0, 3.7, { ry: 1.2 }));
-  add(piece('Bag', P.bag(.44, 3), 2.3, 0, 3.8, { ry: .3 }));
-  add(piece('Palm fronds', Y.deadFronds(8, 6), 3.4, 0, 3.15, { ry: .2, s: .8 }));
-  add(piece('Tires', Y.tireStack(3), 4.6, 0, 3.8, { ry: .2 }));
-  add(piece('Pallets', Y.pallets(3), 4.55, 0, 4.4, { ry: .1, s: .8 }));
-  add(piece('Chair', Q.officeChair(), 1.9, 0, 3.0, { ry: .9 }));
-  add(piece('Filing cabinet', Q.filingCabinet(), 1.7, 0, 1.9, { ry: .25 }));
+  /* three loose rows fanned toward the camera, with air between the pieces so each one reads on its own */
+  /* back: the tall, flat-faced things */
+  add(piece('Fridge', P.fridge(), 1.6, 0, .35, { ry: .12 }));
+  add(piece('Washer', P.washer(), 3.2, 0, .35, { ry: -.1 }));
+  add(piece('Mattress', (() => { const m = P.mattress(1.9, .42, 2.9); m.rotation.x = -Math.PI / 2; m.position.set(0, 1.45, 0); const g = new THREE.Group(); g.add(m); return g; })(), 4.7, .0, .95, { rx: -.3, ry: -.25 }));
+  /* middle: the big furniture, side by side */
+  add(piece('Couch', P.sofa(3.1), 2.6, 0, 2.3, { ry: -.2 }));
+  add(piece('TV', P.tv(2.0, 1.15), 4.35, .0, 2.1, { rx: -.1, ry: 1.0 }));
+  add(piece('Toilet', S.toilet(), 4.6, 0, 3.6, { ry: .9 }));
+  /* front: the small stuff you can name at a glance */
+  add(piece('Bike', P.bike(), 1.5, 0, 3.4, { ry: .75, rz: .22 }));
+  add(piece('Box', box('KITCHEN', 1.25, .95, 1.0), 2.85, 0, 3.55, { ry: .15 }));
+  add(piece('Box', box('BOOKS', 1.0, .8, .85, '#bfa07a'), 2.9, .86, 3.6, { ry: -.3 }));
+  add(piece('Bag', P.bag(.52, 1), 3.75, 0, 4.2, { ry: .4 }));
+  add(piece('Bag', P.bag(.46, 2), 4.3, 0, 4.4, { ry: 1.2 }));
+  add(piece('Tires', Y.tireStack(3), .75, 0, 2.3, { ry: .2 }));
+  add(piece('Pallets', Y.pallets(3), 2.4, 0, 4.3, { ry: .1, s: .8 }));
   return items;
 }
