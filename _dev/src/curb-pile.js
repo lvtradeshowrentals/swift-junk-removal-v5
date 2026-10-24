@@ -30,7 +30,6 @@ export function buildPile() {
   /* back: the tall, flat-faced things */
   add(piece('Fridge', P.fridge(), 1.6, 0, .35, { ry: .12 }));
   add(piece('Washer', P.washer(), 3.2, 0, .35, { ry: -.1 }));
-  add(piece('Mattress', (() => { const m = P.mattress(1.9, .42, 2.9); m.rotation.x = -Math.PI / 2; m.position.set(0, 1.45, 0); const g = new THREE.Group(); g.add(m); return g; })(), 4.7, .0, .95, { rx: -.3, ry: -.25 }));
   /* middle: the big furniture, side by side */
   add(piece('Couch', P.sofa(3.1), 2.6, 0, 2.3, { ry: -.2 }));
   add(piece('TV', P.tv(2.0, 1.15), 4.35, .0, 2.1, { rx: -.1, ry: 1.0 }));
