@@ -1,7 +1,8 @@
 <!doctype html><meta charset="utf-8"><title>labh</title>
 <style>html,body{margin:0;height:100%;background:linear-gradient(180deg,#e6eaee,#f6f7f9);overflow:hidden}canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}</style>
 <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500..800&display=swap" rel="stylesheet">
-<canvas id="c"></canvas><script src="../js/scene.js"></script>
+<canvas id="c"></canvas>
+<script>if (new URLSearchParams(location.search).get('bg') === 'none') document.documentElement.style.background = document.body.style.background = 'transparent';</script><script src="../js/scene.js"></script>
 <script>
 const q = new URLSearchParams(location.search);
 window.events = [];

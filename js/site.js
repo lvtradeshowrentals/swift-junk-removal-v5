@@ -156,7 +156,7 @@
       if (!coarse && !reduce) addEventListener('pointermove', (e) => scene.pointer((e.clientX / innerWidth - .5) * 2, (e.clientY / innerHeight - .5) * 2), { passive: true });
       if ('IntersectionObserver' in window) new IntersectionObserver((es) => { heroVisible = es[0].isIntersecting; }, { rootMargin: '10% 0px' }).observe(heroEl);
       window.__scene = scene;
-      if (reduce || params.has('still')) scene.jumpNow(params.get('still') === 'final' || reduce); else SPL.hero(() => scene.start());
+      if (reduce || params.has('still')) scene.jumpNow(params.get('still') === 'final'); else SPL.hero(() => scene.start());
     } catch (err) { scene = null; stage.classList.remove('live'); stage.classList.add('static'); meter.classList.add('nogl'); if (window.console) console.warn('scene off', err); }
   }
   startScene();

@@ -14,7 +14,7 @@ const times = (process.env.T || '').split(',').filter(Boolean).map(Number);
   const url = 'file:///' + path.join(__dirname, 'labh.html').split(path.sep).join('/') + '?' + qs;
   if (!times.length) {
     await p.goto(url, { waitUntil: 'load' }); await p.waitForFunction('window.__done', { timeout: 120000 });
-    await p.screenshot({ path: path.join(__dirname, 'shots', name + '.png') }); console.log('shot', name);
+    await p.screenshot({ path: path.join(__dirname, 'shots', name + '.png'), omitBackground: qs.includes('bg=none') }); console.log('shot', name);
   } else {
     // one page, stepping forward through the timeline: advance() is cumulative
     await p.goto(url + '&adv=0', { waitUntil: 'load' }); await p.waitForFunction('window.__done', { timeout: 120000 });

@@ -11,12 +11,29 @@ float dn(vec3 x){ vec3 i = floor(x), f = fract(x); f = f * f * (3. - 2. * f);
 float dsweep(vec3 w){ return dot(w.xz, uDir) + (dn(w * 1.5) * .7 + dn(w * 4.3) * .3) * 1.25 - .62; }`;
 
 const SURF_VERT = /* glsl */ `
-uniform float uFront, uTime, uScale, uSign; uniform vec2 uDir; uniform vec3 uAccent;
+uniform float uFront, uTime, uScale, uSign, uGather, uQS; uniform vec2 uDir; uniform vec3 uAccent, uTarget;
 attribute vec4 aR; attribute vec3 aCol;
 varying vec3 vC; varying float vA;
 ${GLSL_NOISE}
 void main(){
-  float q = (uFront - dsweep(position)) * uSign / 2.4;
+  float q = (uFront - dsweep(position)) * uSign / uQS;
+  if (uGather > .5) {
+    if (q < 0.0 || q > 1.0) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; vA = 0.; vC = vec3(0.); return; }
+    float e = min(q * 5., 1.);
+    vec3 p0 = position + vec3((aR.y - .5) * .9, .35 + aR.x * .9, (aR.z - .5) * .9) * e;
+    vec3 tg = uTarget + vec3((aR.y - .5) * .5, (aR.x - .5) * 1.4, (aR.z - .5) * 1.5);
+    float g = smoothstep(.10, .92, q); g = g * g * (3. - 2. * g);
+    vec3 p = mix(p0, tg, g);
+    p.y += sin(g * 3.14159) * (1.1 + aR.w * 1.6) * (1.0 - g * .35);
+    p.z += sin(g * 6.2832 + aR.x * 6.) * .18 * (1. - g);
+    vec4 mv = modelViewMatrix * vec4(p, 1.);
+    gl_Position = projectionMatrix * mv;
+    float sz = (.06 + aR.w * .11) * (1. - g * .45);
+    gl_PointSize = sz * uScale / -mv.z;
+    vA = smoothstep(0., .04, q) * (1. - smoothstep(.9, 1., q));
+    vC = mix(aCol, uAccent, smoothstep(.0, .35, q));
+    return;
+  }
   if (q < 0.0 || q > 1.0) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; vA = 0.; vC = vec3(0.); return; }
   vec3 p = position;
   p.y += q * (0.6 + aR.x * 2.8);
